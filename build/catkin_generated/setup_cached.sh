@@ -7,8 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/ubuntu/catkin_test/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/ubuntu/catkin_test/devel/lib:$LD_LIBRARY_PATH"
-export PWD="/home/ubuntu/catkin_test/build"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/ubuntu/catkin_test/devel/share/common-lisp"
-export ROS_PACKAGE_PATH="/home/ubuntu/catkin_test/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/ubuntu/LAPIS/devel:$CMAKE_PREFIX_PATH"
+export PWD="/home/ubuntu/LAPIS/build"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/ubuntu/LAPIS/devel/share/common-lisp"
+export ROS_PACKAGE_PATH="/home/ubuntu/LAPIS/src:$ROS_PACKAGE_PATH"

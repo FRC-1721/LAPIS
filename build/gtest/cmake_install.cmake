@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/ubuntu/catkin_test/install")
+  set(CMAKE_INSTALL_PREFIX "/home/ubuntu/LAPIS/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/ubuntu/catkin_test/build/gtest/gtest/cmake_install.cmake")
+  include("/home/ubuntu/LAPIS/build/gtest/gtest/cmake_install.cmake")
 
 endif()
 

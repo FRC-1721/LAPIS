@@ -1,8 +1,0 @@
-prefix=/home/ubuntu/catkin_test/install
-
-Name: rplidar_ros
-Description: Description of rplidar_ros
-Version: 1.10.0
-Cflags: 
-Libs: -L/home/ubuntu/catkin_test/install/lib 
-Requires: 

@@ -1,2 +1,2 @@
-rplidar_ros
--DCATKIN_DEVEL_PREFIX=/home/ubuntu/catkin_test/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/catkin_test/install -G Unix Makefiles
+
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/LAPIS/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/LAPIS/install -G Unix Makefiles
