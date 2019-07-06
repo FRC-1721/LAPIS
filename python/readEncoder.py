@@ -6,14 +6,15 @@ from networktables import NetworkTables
 import logging	# Required
 logging.basicConfig(level=logging.DEBUG)
 
-ip = localhost	# IP of server (rio)
+ip = 'localhost'	# IP of server (rio)
 NetworkTables.initialize(server=ip)
 
 sd = NetworkTables.getTable('SmartDashboard')	# Init smartDashboard
 sd.putString('LAPIS State', 'Online')	# Put a number up
 
-while true:
-	portEncoder = sd.getNumber('Port')
-	starboardEncoder = sd.getNumber('Starboard')
+while 1:
+	portEncoder = sd.getNumber('Port','0')
+	starboardEncoder = sd.getNumber('Starboard','0')
 
 	print(portEncoder + starboardEncoder)
+	time.sleep(1)
