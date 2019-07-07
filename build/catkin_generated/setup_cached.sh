@@ -7,4 +7,6 @@
 # new environment variables
 
 # modified environment variables
+export LD_LIBRARY_PATH="/home/ubuntu/LAPIS/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/ubuntu/LAPIS/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD="/home/ubuntu/LAPIS/build"
