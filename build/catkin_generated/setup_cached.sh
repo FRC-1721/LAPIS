@@ -7,7 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/ubuntu/LAPIS/devel:$CMAKE_PREFIX_PATH"
 export PWD="/home/ubuntu/LAPIS/build"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/ubuntu/LAPIS/devel/share/common-lisp"
-export ROS_PACKAGE_PATH="/home/ubuntu/LAPIS/src:$ROS_PACKAGE_PATH"
