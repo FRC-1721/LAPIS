@@ -6,7 +6,7 @@ from networktables import NetworkTables
 import logging	# Required
 logging.basicConfig(level=logging.DEBUG)
 
-ip = 'localhost'	# IP of server (rio)
+ip = 'roboRIO-####-FRC.local'	# IP of server (rio)
 NetworkTables.initialize(server=ip)
 
 sd = NetworkTables.getTable('SmartDashboard')	# Init smartDashboard
