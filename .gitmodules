@@ -1,3 +1,0 @@
-[submodule "src/rplidar"]
-	path = src/rplidar
-	url = https://github.com/robopeak/rplidar_ros
