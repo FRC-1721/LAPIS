@@ -9,7 +9,8 @@ import tf
 import logging	# Required
 logging.basicConfig(level=logging.DEBUG)
 
-ip = 'roboRIO-1721-FRC.local'	# IP of server (rio)
+#ip = 'roboRIO-1721-FRC.local'	# IP of server (rio)
+ip = 'localhost'   # For testing
 NetworkTables.initialize(server=ip)
 
 sd = NetworkTables.getTable('SmartDashboard')	# Init smartDashboard
