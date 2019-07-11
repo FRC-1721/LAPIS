@@ -1,1 +1,1 @@
-pip3 install pynetworktables
+pip install pynetworktables==2018.2.1
