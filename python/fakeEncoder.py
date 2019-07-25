@@ -20,7 +20,7 @@ while 1:
 
     print(fakePortEncoder)
     print(fakeStarboardEncoder)
-    print(i)
+    #print(i)
 
     fakePortEncoder = round(speedModifier * (i + (sin(i) + sin(3 * i) + sin(9 * i)))) # Seperate so we can adjust them individually
     fakeStarboardEncoder = round(speedModifier * (i + (sin(i) + sin(3 * i) + sin(9 * i))))
