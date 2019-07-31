@@ -10,7 +10,7 @@ NetworkTables.initialize()
 table = NetworkTables.getTable("SmartDashboard")
 
 fakePortEncoder = 0
-fakePortEncoder = 0
+fakeStarboardEncoder = 0
 speedModifier = 10
 
 while 1:
