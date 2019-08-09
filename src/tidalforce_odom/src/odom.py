@@ -63,7 +63,7 @@ while not rospy.is_shutdown():	# runs for as long as the node is running
         #odom.pose.pose.orientation.z = 1.0
         pub.publish(odom)
         br.sendTransform((x, y, 0), (0, 0, sin(th / 2), cos(th / 2)), rospy.Time.now(), "laser", "odom")
-        print(x)
-        print(y)
+        #print(x)
+        #print(y)
 
 rate.sleep()

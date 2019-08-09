@@ -18,8 +18,8 @@ while 1:
     table.putNumber("Port", fakePortEncoder)
     table.putNumber("Starboard", fakeStarboardEncoder)
 
-    print(fakePortEncoder)
-    print(fakeStarboardEncoder)
+    #print(fakePortEncoder)
+    #print(fakeStarboardEncoder)
     #print(i)
 
     fakePortEncoder = round(speedModifier * (i + (sin(i) + sin(3 * i) + sin(9 * i)))) # Seperate so we can adjust them individually
