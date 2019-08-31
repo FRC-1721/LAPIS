@@ -1,2 +1,0 @@
-tidalforce_odom
--DCATKIN_DEVEL_PREFIX=/home/ubuntu/LAPIS/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/LAPIS/install -G Unix Makefiles
