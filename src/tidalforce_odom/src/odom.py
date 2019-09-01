@@ -127,17 +127,19 @@ if __name__ == "__main__":
     rospy.init_node("odom")
 
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-    #ip = 'localhost'  # For testing
-    NetworkTables.initialize(server=ip)
-    sd = NetworkTables.getTable('SmartDashboard')
+    #ip = rospy.get_param("~ip", "10.17.21.55") # First mDNS almost never works on the feild
+    #ip = rospy.get_param("~ip", "localhost") # For testing
+    NetworkTables.initialize(server = ip)
+    #robotTable = NetworkTables.getTable('ROS')
+    robotTable = NetworkTables.getTable('SmartDashboard')
 
     odom = Odom()
 
     rate = rospy.Rate(10)  # in Hz
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
-        left = -float(sd.getNumber('Port','0'))
-        right = float(sd.getNumber('Starboard','0'))
+        left = -float(robotTable.getNumber('Port','0'))
+        right = float(robotTable.getNumber('Starboard','0'))
 
         # Update and publish odometry
         odom.update(left, right)
