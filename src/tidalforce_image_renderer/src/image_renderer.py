@@ -5,7 +5,7 @@ from sensor_msgs.msg import PointCloud2 as pc2
 from sensor_msgs.msg import LaserScan
 from laser_geometry import LaserProjection
 
-class laser_pointcloud():
+class laser_pointcloud(): # convert laser to a pointcloud
     def __init__(self):
         self.laserProj = LaserProjection()
         self.pcPub = rospy.Publisher ("/laserPointCloud", pc2, queue_size=1) # point cloud publisher
@@ -17,9 +17,12 @@ class laser_pointcloud():
         self.pcPub.publish (cloud_out) # publish cloud out
         print("scan")
 
-class pointcloud_image():
-    def __init__(self):
-        #more stuff
+#class pointcloud_image(): # convert pointcloud to image
+#    def __init__(self):
+#        # init
+#
+#    def something(self, data):
+#        # publish stuff
 
 if __name__ == '__main__':
     rospy.init_node ("laserPC")
