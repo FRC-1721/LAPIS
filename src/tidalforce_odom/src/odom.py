@@ -126,9 +126,9 @@ if __name__ == "__main__":
 
     rospy.init_node("odom")
 
-    ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
+    #ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
     #ip = rospy.get_param("~ip", "10.17.21.55") # First mDNS almost never works on the feild
-    #ip = rospy.get_param("~ip", "localhost") # For testing
+    ip = rospy.get_param("~ip", "localhost") # For testing
     NetworkTables.initialize(server = ip)
     #robotTable = NetworkTables.getTable('ROS')
     robotTable = NetworkTables.getTable('SmartDashboard')
