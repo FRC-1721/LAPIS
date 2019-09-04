@@ -1,4 +1,5 @@
 # LAPIS
+![Image Owned by Mojang](https://gamepedia.cursecdn.com/minecraft_gamepedia/archive/9/9f/20190403173427%21Lapis_Lazuli.png?version=333534eee995063b4191a3abe9f86113)
 
 ## Installation Notes
 
