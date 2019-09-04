@@ -10,19 +10,22 @@ class laser_pointcloud(): # convert laser to a pointcloud
         self.laserProj = LaserProjection()
         self.pcPub = rospy.Publisher ("/laserPointCloud", pc2, queue_size=1) # point cloud publisher
         self.laserSub = rospy.Subscriber ("/scan", LaserScan, self.laserCallback) # subscribe to laser scan
-        print("init")
+        print("init laser - pointcloud")
 
     def laserCallback(self, data):
         cloud_out = self.laserProj.projectLaser(data) # create cloud
         self.pcPub.publish (cloud_out) # publish cloud out
-        print("scan")
+        print("laser - pointcloud")
 
-#class pointcloud_image(): # convert pointcloud to image
-#    def __init__(self):
-#        # init
-#
-#    def something(self, data):
-#        # publish stuff
+class pointcloud_image(): # convert pointcloud to image
+    def __init__(self):
+        print("init pointcloud - image")
+        self.pointcloudSub = rospy.Subscriber ("/pointcloud", PointCloid, self.pointcloudCallback) # subscribe to pointcloud
+        # init
+
+    def pointloudCallback(self, data):
+        # publish stuff
+        print("pointcloud - image")
 
 if __name__ == '__main__':
     rospy.init_node ("laserPC")
