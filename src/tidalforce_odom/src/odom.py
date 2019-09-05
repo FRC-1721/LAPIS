@@ -127,8 +127,13 @@ if __name__ == "__main__":
     rospy.init_node("odom")
 
     #ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
+    #ip = rospy.get_param("~ip", "localhost") # For testing
     #ip = rospy.get_param("~ip", "10.17.21.55") # First mDNS almost never works on the feild
-    ip = rospy.get_param("~ip", "localhost") # For testing
+    if (len(sys.argv) > 1): # If there is more than one argument
+        ip = sys.argv[1] # Set the ip to the extra argument (remember to count from zero!)
+    else: # if no extra argument
+        ip = rospy.get_param("~ip", "10.17.21.55") # use the RIO ip by default
+    print "Starting NetworkTables using IP: ", ip
     NetworkTables.initialize(server = ip)
     #robotTable = NetworkTables.getTable('ROS')
     robotTable = NetworkTables.getTable('SmartDashboard')
