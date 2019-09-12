@@ -1,0 +1,12 @@
+<robot name="hungry_toaster">
+  <link name="robotBody" />
+  <link name="lidar" />
+
+  <joint name="robot-lidar" type="fixed">
+    <parent link="robotBody"/>
+    <child link="lidar"/>
+  </joint>
+
+  <link name="lidar">
+  </link>
+</robot>
