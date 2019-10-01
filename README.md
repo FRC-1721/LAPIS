@@ -3,9 +3,13 @@
 
 ## Installation Notes
 Using the rosinstall file, copy the rosinstall file into your catkin workspace
-	curl https://raw.githubusercontent.com/FRC-1721/LAPIS/restructure-pkg/kinetic.rosinstall
+```
+curl https://raw.githubusercontent.com/FRC-1721/LAPIS/restructure-pkg/kinetic.rosinstall
+```
 Then run the update
-	wstool update -t src
+```
+wstool update -t src
+```
 
 Newer versions of pynetworktables no longer support Python 2.7, unfortunately
 ROS doesn't really support Python 3 even with the latest Melodic release. To
