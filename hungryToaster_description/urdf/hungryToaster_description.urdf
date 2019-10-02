@@ -1,9 +1,9 @@
-<robot name="hungry-toaster">
+<robot name="hungryToaster">
   <link name="base_link">
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
       <geometry>
-        <mesh filename="package://hungry-toaster_description/meshes/hungry-toaster-meters.stl"/>
+        <mesh filename="package://hungryToaster_description/meshes/hungry-toaster-meters.stl"/>
       </geometry>
     </visual>
   </link>
