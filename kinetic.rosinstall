@@ -2,7 +2,8 @@
 #- setup-file: {local-name: /opt/ros/kinetic/setup.sh}
 
 # main repos
-- git: {local-name: LAPIS/, uri: 'http://github.com/FRC-1721/LAPIS', version: restructure-pkg}
+- git: {local-name: LAPIS/, uri: 'http://github.com/FRC-1721/LAPIS', version: master}
 
 # drivers 
-- git: {local-name: rplidar_ros/, uri: 'http://github.com/robopeak/rplidar_ros', version: master}
+#- git: {local-name: rplidar_ros/, uri: 'http://github.com/robopeak/rplidar_ros', version: master}
+#- git: {local-name: rplidar_ros/, uri: 'http://github.com/Slamtec/rplidar_ros', version: master}
