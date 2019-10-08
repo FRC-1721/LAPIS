@@ -2,6 +2,14 @@
 ![Image Owned by Mojang](https://gamepedia.cursecdn.com/minecraft_gamepedia/archive/9/9f/20190403173427%21Lapis_Lazuli.png?version=333534eee995063b4191a3abe9f86113)
 
 ## Installation Notes
+Using the rosinstall file, copy the rosinstall file into your catkin workspace
+```
+curl https://raw.githubusercontent.com/FRC-1721/LAPIS/restructure-pkg/kinetic.rosinstall
+```
+Then run the update
+```
+wstool update -t src
+```
 
 Newer versions of pynetworktables no longer support Python 2.7, unfortunately
 ROS doesn't really support Python 3 even with the latest Melodic release. To
