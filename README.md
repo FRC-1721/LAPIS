@@ -4,7 +4,7 @@
 ## Installation Notes
 Using the rosinstall file, copy the rosinstall file into your catkin workspace
 ```
-curl https://raw.githubusercontent.com/FRC-1721/LAPIS/master/kinetic.rosinstall
+curl https://raw.githubusercontent.com/FRC-1721/LAPIS/master/kinetic.rosinstall -o
 ```
 Then run the update
 ```
