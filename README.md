@@ -8,6 +8,7 @@ curl https://raw.githubusercontent.com/FRC-1721/LAPIS/master/kinetic.rosinstall 
 ```
 Then run the update
 ```
+cp kinetic.rosinstall src/.rosinstall
 wstool update -t src
 ```
 
