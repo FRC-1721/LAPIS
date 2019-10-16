@@ -3,7 +3,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
       <geometry>
-        <mesh filename="package://hungryToaster_description/meshes/hungry-toaster-meters.stl"/>
+        <mesh filename="package://hungry_toaster_description/meshes/hungry_toaster_meters.stl"/>
       </geometry>
     </visual>
   </link>
