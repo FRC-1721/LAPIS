@@ -1,2 +1,4 @@
 build
 devel
+CMakeLists.txt
+.catkin_workspace
