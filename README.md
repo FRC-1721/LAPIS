@@ -35,8 +35,17 @@ and set the ROS_MASTER_URI to the robot's computer IP address:
 	export ROS_IP=X.Y.Z.2
 	export ROS_MASTER_URI=http://X.Y.Z.1:11311
 
-# Testing
-Launch `fakeOdom` or `flakeOdom` first for testing, it will provide
-networktables data in place of the rio data and will simulate changing encoder
-values. The tidalforceodom node will generate /odom and when pointed toward
-127.0.0.1 it will read the fake data from the encoders
+# Running the Code
+
+To run everything on the real robot (laser drivers, odometry, URDF):
+
+	export ROS_IP=10.17.21.106
+	roslaunch hungry_toaster hungry_toaster.launch
+
+To simuate network tables for odometry:
+
+	rosrun tidalforce_odom simulated_rio.py
+
+To just view the URDF/meshes:
+
+	roslaunch hungry_toaster view_urdf.launch
