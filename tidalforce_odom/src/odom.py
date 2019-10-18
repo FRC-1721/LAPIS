@@ -47,10 +47,10 @@ class Odom:
 
     def __init__(self):
         # parameters: rates and geometry
-        self.ticks_meter = float(rospy.get_param("~ticks_meter", 50000))  # roughly calibrated on 8/25/2019
-        self.base_width = float(rospy.get_param("~base_width", 0.75))
+        self.ticks_meter = float(rospy.get_param("~ticks_meter", 10000))
+        self.base_width = float(rospy.get_param("~base_width", 0.625))
 
-        self.base_frame_id = rospy.get_param("~base_frame_id", "laser")  # was "base_link"
+        self.base_frame_id = rospy.get_param("~base_frame_id", "base_link")
         self.odom_frame_id = rospy.get_param("~odom_frame_id", "odom")
 
         # internal data
@@ -127,16 +127,10 @@ if __name__ == "__main__":
 
     rospy.init_node("odom")
 
-    #ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-    #ip = rospy.get_param("~ip", "localhost") # For testing
-    #ip = rospy.get_param("~ip", "10.17.21.55") # First mDNS almost never works on the feild
-    if len(sys.argv) > 1: # If there is more than one argument
-        ip = sys.argv[1] # Set the ip to the extra argument (remember to count from zero!)
-    else: # if no extra argument
-        ip = rospy.get_param("~ip", "10.17.21.55") # use the RIO ip by default
+    # FRC mDNS almost never works - 10.17.21.55 is RIO
+    ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
     print "Starting NetworkTables using IP: ", ip
     NetworkTables.initialize(server = ip)
-    #robotTable = NetworkTables.getTable('ROS')
     robotTable = NetworkTables.getTable('SmartDashboard')
 
     odom = Odom()

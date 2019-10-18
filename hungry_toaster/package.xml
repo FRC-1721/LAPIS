@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>hungry_toaster_description</name>
+  <name>hungry_toaster</name>
   <version>0.0.0</version>
-  <description>The hungry_toaster_description package</description>
+  <description>ROS Support for Hungry Toaster</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
