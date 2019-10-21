@@ -131,7 +131,7 @@ if __name__ == "__main__":
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
     print "Starting NetworkTables using IP: ", ip
     NetworkTables.initialize(server = ip)
-    robotTable = NetworkTables.getTable('SmartDashboard')
+    robotTable = NetworkTables.getTable('ROS')
 
     odom = Odom()
 

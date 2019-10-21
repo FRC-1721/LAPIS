@@ -8,7 +8,7 @@ import logging	# Required
 logging.basicConfig(level=logging.DEBUG)
 
 NetworkTables.initialize()
-table = NetworkTables.getTable("SmartDashboard")
+table = NetworkTables.getTable("ROS")
 
 fakePortEncoder = 10
 fakeStarboardEncoder = 10
