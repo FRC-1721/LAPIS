@@ -47,12 +47,12 @@ class LaserRot(object):
         bigangle = 0
         bigrange = 0
         for i in range(len(laser)):
+            #print(str(i) + " " + str(laser[i]))
             if laser[i] < shortest_laser:
                 angle=self.laser.angle_min + i*self.laser.angle_increment
                 bigangle = i
                 bigrange = laser[i]
-                #x=laser[i]*cos(angle)
-                x=bigrange*cos(bigangle)
+                x=laser[i]*cos(angle)
                 if x>-0.2:
                     shortest_laser=laser[i]
                     point.x=x
@@ -70,26 +70,26 @@ class LaserRot(object):
         self.closestP.publish(point_transformed)
         
         #print(bigrange)
-        print(bigangle)
-        if bigrange < 1.6:
-            if bigangle > 0 and bigangle < 90:
+        #print(bigangle)
+        if bigrange < 3:
+            if (bigangle > 0 and bigangle < 90):
                 table.putNumber("coprocessorPort", -0.4)
                 table.putNumber("coprocessorStarboard", -0.4)
                 print("Turn Left")
-                print(bigangle)
+                #print(bigangle)
             elif bigangle < 180 and bigangle >= 90:
                 table.putNumber("coprocessorPort", 0.4)
                 table.putNumber("coprocessorStarboard", 0.4)
                 print("Turn Right")
-                print(bigangle)
+                #print(bigangle)
             else:
-                table.putNumber("coprocessorPort", -0.5)
-                table.putNumber("coprocessorStarboard", 0.5)
+                table.putNumber("coprocessorPort", -0.35)
+                table.putNumber("coprocessorStarboard", 0.35)
                 print("Go Straight")
                 #print(bigangle)
         else:
-                table.putNumber("coprocessorPort", -0.7)
-                table.putNumber("coprocessorStarboard", 0.7)
+                table.putNumber("coprocessorPort", -0.4)
+                table.putNumber("coprocessorStarboard", 0.4)
                 print("Go Straight")
                 #print(bigangle) 
 
