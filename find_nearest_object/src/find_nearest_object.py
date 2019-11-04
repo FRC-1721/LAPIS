@@ -51,7 +51,8 @@ class LaserRot(object):
                 angle=self.laser.angle_min + i*self.laser.angle_increment
                 bigangle = i
                 bigrange = laser[i]
-                x=laser[i]*cos(angle)
+                #x=laser[i]*cos(angle)
+                x=bigrange*cos(bigangle)
                 if x>-0.2:
                     shortest_laser=laser[i]
                     point.x=x
