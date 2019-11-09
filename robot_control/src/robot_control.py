@@ -29,8 +29,12 @@ if __name__ == "__main__":
         current_drive_i = drive_i + current_drive_i
         current_turn_i = turn_i + current_turn_i
         
-        thro = (distance_error * (dirve_p / drive_d)) + current_drive_i
+        thro = (distance_error * (dirve_p / (drive_d * distance_error))) + current_drive_i
         thro = thro * deadzone_falloff(instant_heading_error) # if not facing the correct way dont drive forward
+        #TODO Make robot drive backwards by using following algos in reverse
+        
+        steerage = (instant_heading_error * (turn_p / (turn_d * instant_heading_error))) + current_turn_i
+        
         if thro > 1:
             thro = 1
             print ("Max Power!")
