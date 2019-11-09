@@ -58,3 +58,5 @@ if __name__ == "__main__":
         
         current_robot_world_heading = 30 #TODO Get current heading of robot relative to the world
         current_target_world_heading = 90 #TODO Get current heading of target (The ending direction the robot should face)
+        
+        rate.sleep()
