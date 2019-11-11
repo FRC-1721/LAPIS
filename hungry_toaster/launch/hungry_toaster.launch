@@ -25,6 +25,7 @@
     <param name="base_width" value="0.625" />
   </node>
 
+  <!-- Get Laser Scan data, and odom transform, use in slam_karto algo -->
   <node pkg="slam_karto" type="slam_karto" name="slam_karto" output="screen">
     <param name="odom_frame" value="odom"/>
     <param name="map_update_interval" value="25"/>
