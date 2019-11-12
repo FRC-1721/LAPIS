@@ -140,7 +140,7 @@ if __name__ == "__main__":
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
         right = float(robotTable.getNumber('Starboard','0'))
-        table.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
+        #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
 
         # Update and publish odometry
         odom.update(left, right)
