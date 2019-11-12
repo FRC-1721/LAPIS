@@ -15,11 +15,11 @@ print ("Starting NetworkTables(Robot Control) using IP: ", ip)
 NetworkTables.initialize(server = ip)
 table = NetworkTables.getTable("ROS")
 
+steerage_p = 0.7
+
 def callback(msg):
-    thro = msg.linear.x +  msg.linear.y #+ msg.linear.z # Not even sure nav stack will ask for linear z?
-    steerage = msg.angular.x # In radians, not quite sure how to use
-    #msg.angular.y
-    #msg.angular.z
+    thro = msg.linear.x # x is forward of the robot no matter what
+    steerage = msg.angular.z * steerage_p # In radians, equates to speed
 
     table.putNumber("coprocessorPort", thro - steerage) # Not sure if any of this will work
     table.putNumber("coprocessorStarboard", (thro + steerage) * -1) # Not sure if any of this will work
