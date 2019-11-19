@@ -68,30 +68,30 @@ class LaserRot(object):
         point_transformed.header=pose_transformed.header
         point_transformed.point = pose_transformed.pose.position
         self.closestP.publish(point_transformed)
-        
+
         #print(bigrange)
-        print(bigangle)
-        if bigrange < 2:
-            if ((bigangle > 0 and bigangle < 90) or (bigangle > 280 and bigangle <= 360)):
-                table.putNumber("coprocessorPort", 0)
+        #print(bigangle)
+        if bigrange < 3:
+            if (bigangle > 0 and bigangle < 90):
+                table.putNumber("coprocessorPort", -0.4)
                 table.putNumber("coprocessorStarboard", -0.4)
                 print("Turn Left")
                 #print(bigangle)
             elif bigangle < 180 and bigangle >= 90:
                 table.putNumber("coprocessorPort", 0.4)
-                table.putNumber("coprocessorStarboard", 0)
+                table.putNumber("coprocessorStarboard", 0.4)
                 print("Turn Right")
                 #print(bigangle)
             else:
                 table.putNumber("coprocessorPort", -0.35)
-                table.putNumber("coprocessorStarboard", 0.38)
+                table.putNumber("coprocessorStarboard", 0.35)
                 print("Go Straight")
                 #print(bigangle)
         else:
-                table.putNumber("coprocessorPort", -0.5)
-                table.putNumber("coprocessorStarboard", 0.5)
+                table.putNumber("coprocessorPort", -0.4)
+                table.putNumber("coprocessorStarboard", 0.4)
                 print("Go Straight")
-                #print(bigangle) 
+                #print(bigangle)
 
 rospy.init_node("compute_closest_obstcl")
 r=rospy.Rate(10)
