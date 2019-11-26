@@ -5,7 +5,7 @@ from networktables import NetworkTables
 import logging # Required
 logging.basicConfig(level=logging.DEBUG)
 
-ip = "10.17.21.2"
+ip = "roboRIO-1721-FRC"
 hal9000 = pyttsx3.init()
 
 NetworkTables.initialize(server=ip)

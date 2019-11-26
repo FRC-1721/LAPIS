@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 from geometry_msgs.msg import Twist
 from networktables import NetworkTables
 
-ip = "roboRIO-1721-FRC"
+ip = rospy.get_param("~ip", "roboRIO-1721-FRC") # Otherwise use mDNS as default
 #ip = "localhost" # For debugging
 print ("Starting NetworkTables(Robot Control) using IP: ", ip)
 NetworkTables.initialize(server = ip)
