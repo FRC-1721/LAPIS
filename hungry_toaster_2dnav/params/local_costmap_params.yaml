@@ -1,7 +1,7 @@
 local_costmap:
   global_frame: odom
   robot_base_frame: base_link
-  update_frequency: 10.0
+  update_frequency: 4.0  # Change this to match laser rate
   publish_frequency: 2.0
   static_map: false
   rolling_window: true

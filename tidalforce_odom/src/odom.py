@@ -129,13 +129,13 @@ if __name__ == "__main__":
 
     # FRC mDNS almost never works - 10.17.21.55 is RIO
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-    print "Starting NetworkTables(odom) using IP: ", ip
+    print "Starting NetworkTables using IP: ", ip
     NetworkTables.initialize(server = ip)
     robotTable = NetworkTables.getTable('ROS')
 
     odom = Odom()
 
-    rate = rospy.Rate(10)  # in Hz
+    rate = rospy.Rate(50)  # in Hz
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
