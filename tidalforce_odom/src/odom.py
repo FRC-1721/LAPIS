@@ -136,6 +136,7 @@ if __name__ == "__main__":
     odom = Odom()
 
     rate = rospy.Rate(50)  # in Hz
+    previous_watchdog = 0 # for not updating the odom with junk values
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
@@ -143,6 +144,9 @@ if __name__ == "__main__":
         #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
 
         # Update and publish odometry
-        odom.update(left, right)
+        current_watchdog = left + right # Get the current value of the encoders
+        if current_watchdog != previous_watchdog: # As long as its different from the previous
+            odom.update(left, right) # Update the odom
+        previous_watchdog = current_watchdog # Set the current watchdog to old
 
         rate.sleep()
