@@ -51,8 +51,8 @@ def callback(msg):
     steerage = msg.angular.z * steerage_p # In radians, equates to speed
     print(thro)
 
-    table.putNumber("coprocessorPort", (thro + steerage) * -1) # Not sure if any of this will work
-    table.putNumber("coprocessorStarboard", (thro - steerage)) # Not sure if any of this will work
+    table.putNumber("coprocessorPort", (thro + steerage) * -1) # Set port wheels
+    table.putNumber("coprocessorStarboard", (thro - steerage)) # Set starboard wheels
 
 def start_listener():
     rospy.init_node('cmd_vel_hungry_toaster')
