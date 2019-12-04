@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 """
-  Copyright (c) 2019 Concord Robotics Inc.
-  Copyright (c) 2010-2011 Vanadium Labs LLC.
-  All right reserved.
+    Copyright (c) 2019 Concord Robotics Inc.
+    Copyright (c) 2010-2011 Vanadium Labs LLC.
+    All right reserved.
 
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
       * Redistributions of source code must retain the above copyright
         notice, this list of conditions and the following disclaimer.
       * Redistributions in binary form must reproduce the above copyright
@@ -16,16 +16,16 @@
         contributors may be used to endorse or promote products derived
         from this software without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL VANADIUM LABS BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
-  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL VANADIUM LABS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+    OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import rospy
@@ -131,17 +131,22 @@ if __name__ == "__main__":
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
     print "Starting NetworkTables using IP: ", ip
     NetworkTables.initialize(server = ip)
-    robotTable = NetworkTables.getTable('SmartDashboard')
+    robotTable = NetworkTables.getTable('ROS')
 
     odom = Odom()
 
-    rate = rospy.Rate(10)  # in Hz
+    rate = rospy.Rate(50)  # in Hz
+    previous_watchdog = 0 # for not updating the odom with junk values
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
         right = float(robotTable.getNumber('Starboard','0'))
+        #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
 
         # Update and publish odometry
-        odom.update(left, right)
+        current_watchdog = left + right # Get the current value of the encoders
+        if current_watchdog != previous_watchdog: # As long as its different from the previous
+            odom.update(left, right) # Update the odom
+        previous_watchdog = current_watchdog # Set the current watchdog to old
 
         rate.sleep()
