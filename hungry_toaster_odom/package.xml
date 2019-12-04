@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>tidalforce_odom</name>
+  <name>hungry_toaster_odom</name>
   <version>0.0.0</version>
-  <description>The tidalforce_odom package</description>
+  <description>The hungry_toaster_odom package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/tidalforce_odom</url> -->
+  <!-- <url type="website">http://wiki.ros.org/hungry_toaster_odom</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
