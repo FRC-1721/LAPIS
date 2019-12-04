@@ -1,6 +1,6 @@
 global_costmap:
-  global_frame: map
-  robot_base_frame: base_link
-  update_frequency: 1.0
+  global_frame: map # Defines what frame the costmap should run in
+  robot_base_frame: base_link # Defines the tf transform of the robot
+  update_frequency: 1.0 # The update frequency in hz
   publish_frequency: 0.5
-  static_map: true
+  static_map: true # Set true if using a static, non changing map, otherwise false

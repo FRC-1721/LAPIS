@@ -1,9 +1,9 @@
 obstacle_range: 2.5 # Max range to define obstacle
 raytrace_range: 3.0 # Robot will attempt to clear 3m ahead
-footprint: [[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]]
+footprint: [[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]] # Footprint of the robot relative to the origin (base link in most cases)
 #robot_radius: ir_of_robot
-inflation_radius: 0.55
+inflation_radius: 0.55 # The radius at witch costs will be observed, the robot will treat all paths that are this distance away or more from an object as the same
 
-observation_sources: laser_scan_sensor
+observation_sources: laser_scan_sensor # A list of sensors, in our case, we only have one
 
-laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true} # Sensor frame is laser tf?
+laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true} # Settings for the laser_scan_sensor
