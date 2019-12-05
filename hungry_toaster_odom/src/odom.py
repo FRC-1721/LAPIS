@@ -63,6 +63,8 @@ class Odom:
         self.dr = 0
         self.then = rospy.Time.now()    # time for determining dx/dy
 
+        self.twist = Twist()
+
         # subscriptions
         self.odomPub = rospy.Publisher("odom", Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
@@ -95,6 +97,9 @@ class Odom:
             self.y = self.y + (sin(self.th)*x + cos(self.th)*y)
         if (th != 0):
             self.th = self.th + th
+        
+        self.twist.linear.x = 0.5 * self.twist.linear.x + 0.5 * self.dx
+        self.twist.angular.z = 0.5 * self.twist.angular.z + 0.5 * self.dr
 
     def publish(self):
         # publish or perish
@@ -120,12 +125,10 @@ class Odom:
         odom.pose.pose.position.z = 0
         odom.pose.pose.orientation = quaternion
         odom.child_frame_id = self.base_frame_id
-        odom.twist.twist.linear.x = self.dx
+        odom.twist.twist.linear.x = self.twist.linear.x
         odom.twist.twist.linear.y = 0
-        odom.twist.twist.angular.z = self.dr
+        odom.twist.twist.angular.z = self.twist.angular.z
         self.odomPub.publish(odom)
-        
-        self.twist = odom.twist.twist # (for debug)
 
 if __name__ == "__main__":
 
