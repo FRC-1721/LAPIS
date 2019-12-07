@@ -63,6 +63,8 @@ class Odom:
         self.dr = 0
         self.then = rospy.Time.now()    # time for determining dx/dy
 
+        self.twist = Twist()
+
         # subscriptions
         self.odomPub = rospy.Publisher("odom", Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
@@ -95,8 +97,13 @@ class Odom:
             self.y = self.y + (sin(self.th)*x + cos(self.th)*y)
         if (th != 0):
             self.th = self.th + th
+        
+        self.twist.linear.x = 0.5 * self.twist.linear.x + 0.5 * self.dx
+        self.twist.angular.z = 0.5 * self.twist.angular.z + 0.5 * self.dr
 
+    def publish(self):
         # publish or perish
+        now = rospy.Time.now()
         quaternion = Quaternion()
         quaternion.x = 0.0
         quaternion.y = 0.0
@@ -118,9 +125,9 @@ class Odom:
         odom.pose.pose.position.z = 0
         odom.pose.pose.orientation = quaternion
         odom.child_frame_id = self.base_frame_id
-        odom.twist.twist.linear.x = self.dx
+        odom.twist.twist.linear.x = self.twist.linear.x
         odom.twist.twist.linear.y = 0
-        odom.twist.twist.angular.z = self.dr
+        odom.twist.twist.angular.z = self.twist.angular.z
         self.odomPub.publish(odom)
 
 if __name__ == "__main__":
@@ -136,17 +143,24 @@ if __name__ == "__main__":
     odom = Odom()
 
     rate = rospy.Rate(50)  # in Hz
-    previous_watchdog = 0 # for not updating the odom with junk values
+    previous_index = 0 # for not updating the odom with junk values
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
         right = float(robotTable.getNumber('Starboard','0'))
+        index = int(robotTable.getNumber('rosIndex','0'))
         #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
 
         # Update and publish odometry
-        current_watchdog = left + right # Get the current value of the encoders
-        if current_watchdog != previous_watchdog: # As long as its different from the previous
+        if index != previous_index: # As long as its different from the previous
             odom.update(left, right) # Update the odom
-        previous_watchdog = current_watchdog # Set the current watchdog to old
+        odom.publish()
+        previous_index = index # Set the current watchdog to old
+        
+        # debug
+        error = ""
+        if odom.twist.angular.z > 3:
+            error = " Look!"
+        print(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
 
         rate.sleep()

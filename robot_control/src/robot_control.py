@@ -44,7 +44,7 @@ print ("Starting NetworkTables(Robot Control) using IP: ", ip)
 NetworkTables.initialize(server = ip)
 table = NetworkTables.getTable("ROS")
 
-steerage_p = 0.7
+steerage_p = 0.3
 
 def callback(msg):
     thro = msg.linear.x # x is forward of the robot no matter what
