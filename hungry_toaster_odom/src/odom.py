@@ -161,6 +161,6 @@ if __name__ == "__main__":
         error = ""
         if odom.twist.angular.z > 3:
             error = " Look!"
-        print(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
+        #print(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
 
         rate.sleep()

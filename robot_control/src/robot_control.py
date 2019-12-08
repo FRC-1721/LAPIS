@@ -44,12 +44,12 @@ print ("Starting NetworkTables(Robot Control) using IP: ", ip)
 NetworkTables.initialize(server = ip)
 table = NetworkTables.getTable("ROS")
 
-max_angular = 100 # The max turn speed of the robot in rad/s (rpm * 2)
-max_total_speed = 10 # The max speed of the robot in m/s
+max_speed = rospy.get_param("~max_speed", 10) # The max speed of the robot in m/s
+max_spin = rospy.get_param("~max_spin", 100) # The max turn speed of the robot in rad/s (rpm * 2)
 
 def callback(msg):
-    thro = (msg.linear.x / max_total_speed) # Scale the robot based off its max total speed
-    steerage = (msg.angular.z / max_angular)
+    thro = (msg.linear.x / max_speed) # Scale the robot based off its max total speed
+    steerage = (msg.angular.z / max_spin)
     if(abs(thro) > 1) or (abs(steerage) > 1):
         print("Overspeed!")
 

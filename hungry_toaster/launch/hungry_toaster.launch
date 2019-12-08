@@ -21,12 +21,16 @@
   <!-- Get odom from RIO, publish to ROS -->
   <node name="odom" pkg="hungry_toaster_odom" type="odom.py" output="screen">
     <!-- calibrated Oct 16 2019 -->
-    <param name="ticks_meter" value="10000" />
-    <param name="base_width" value="0.625" />
+    <param name="ticks_meter" type="int" value="10000" />
+    <param name="base_width" type="float" value="0.625" />
+	<param name="ip" type="string" value="roboRIO-1721-FRC" />
   </node>
   
   <!-- Intepert Twist for the rio to understand -->
   <node name="robot_control" pkg="robot_control" type="robot_control.py" output="screen">
+	<!-- Never calibrated -->
+	<param name="max_speed" type="int" value="10" />
+    <param name="max_spin" type="int" value="100" />
   </node>
 
 </launch>
