@@ -50,6 +50,7 @@ max_spin = rospy.get_param("~max_spin", 100) # The max turn speed of the robot i
 def callback(msg):
     thro = (msg.linear.x / max_speed) # Scale the robot based off its max total speed
     steerage = (msg.angular.z / max_spin)
+    print("Thro:" + str(thro) + ", Steerage:" + str(steerage) + "\r")
     if(abs(thro) > 1) or (abs(steerage) > 1):
         print("Overspeed!")
 
