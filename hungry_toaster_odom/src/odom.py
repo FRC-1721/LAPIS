@@ -41,6 +41,7 @@ from networktables import NetworkTables
 import logging	# Required
 logging.basicConfig(level=logging.DEBUG)
 
+smoothing = 0.1
 
 ## Based off vanadiumlabs/arbotix_ros::DiffController
 class Odom:
@@ -98,8 +99,8 @@ class Odom:
         if (th != 0):
             self.th = self.th + th
         
-        self.twist.linear.x = 0.5 * self.twist.linear.x + 0.5 * self.dx
-        self.twist.angular.z = 0.5 * self.twist.angular.z + 0.5 * self.dr
+        self.twist.linear.x = ((1 - smoothing) * self.twist.linear.x) + (smoothing * self.dx)
+        self.twist.angular.z = ((1 - smoothing) * self.twist.angular.z) + (smoothing * self.dr)
 
     def publish(self):
         # publish or perish
