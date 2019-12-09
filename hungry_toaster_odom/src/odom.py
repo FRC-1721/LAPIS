@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     odom = Odom()
 
-    rate = rospy.Rate(50)  # in Hz
+    rate = rospy.Rate(75)  # in Hz
     previous_index = 0 # for not updating the odom with junk values
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
