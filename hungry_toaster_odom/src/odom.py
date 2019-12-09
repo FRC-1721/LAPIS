@@ -144,6 +144,7 @@ if __name__ == "__main__":
 
     rate = rospy.Rate(75)  # in Hz
     previous_index = 0 # for not updating the odom with junk values
+    checksum = 0 # Helps us keep track of how many messages we got overall
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
         left = -float(robotTable.getNumber('Port','0'))
@@ -154,8 +155,14 @@ if __name__ == "__main__":
         # Update and publish odometry
         if index != previous_index: # As long as its different from the previous
             odom.update(left, right) # Update the odom
+            checksum = checksum + 1 # Remember this index
         odom.publish()
         previous_index = index # Set the current watchdog to old
+        
+        # Indexing tools and debug
+        if index == 0:
+            print("Got " + str(checksum) + " out of 255 messages last run.")
+            checksum = 0
         
         # debug
         error = ""
