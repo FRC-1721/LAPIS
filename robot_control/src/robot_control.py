@@ -38,14 +38,14 @@ logging.basicConfig(level=logging.DEBUG)
 from geometry_msgs.msg import Twist
 from networktables import NetworkTables
 
-ip = "roboRIO-1721-FRC"
+ip = rospy.get_param("~ip", "10.17.21.2")
 #ip = "localhost" # For debugging
 print ("Starting NetworkTables(Robot Control) using IP: ", ip)
 NetworkTables.initialize(server = ip)
 table = NetworkTables.getTable("ROS")
 
-max_speed = rospy.get_param("~max_speed", 10) # The max speed of the robot in m/s
-max_spin = rospy.get_param("~max_spin", 100) # The max turn speed of the robot in rad/s (rpm * 2)
+max_speed = rospy.get_param("~max_speed", 2) # The max speed of the robot in m/s
+max_spin = rospy.get_param("~max_spin", 9) # The max turn speed of the robot in rad/s (rpm * 2)
 
 def callback(msg):
     thro = (msg.linear.x / max_speed) # Scale the robot based off its max total speed
