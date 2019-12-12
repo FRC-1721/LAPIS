@@ -49,14 +49,14 @@ max_speed = rospy.get_param("~max_speed", 2) # The max speed of the robot in m/s
 max_spin = rospy.get_param("~max_spin", 9) # The max turn speed of the robot in rad/s (rpm * 2)
 
 def callback(msg):
-    thro = (msg.linear.x / max_speed) # Scale the robot based off its max total speed
-    steerage = (msg.angular.z / max_spin)
+    thro = msg.linear.x # Scale the robot based off its max total speed
+    steerage = msg.angular.z
     print("Thro:" + str(thro) + ", Steerage:" + str(steerage) + "\r")
-    if(abs(thro) > 1) or (abs(steerage) > 1):
+    if(abs(thro) > max_speed) or (abs(steerage) > max_spin):
         print("Overspeed!")
 
-    table.putNumber("coprocessorPort", (thro + steerage) * -1) # Set port wheels
-    table.putNumber("coprocessorStarboard", (thro - steerage)) # Set starboard wheels
+    table.putNumber("coprocessorPort", thro + steerage) # Set port wheels
+    table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels
 
 def start_listener():
     rospy.init_node('cmd_vel_hungry_toaster')
