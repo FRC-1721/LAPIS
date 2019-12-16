@@ -68,7 +68,7 @@ class LaserRot(object):
         point_transformed.header=pose_transformed.header
         point_transformed.point = pose_transformed.pose.position
         self.closestP.publish(point_transformed)
-        
+
         #print(bigrange)
         #print(bigangle)
         if bigrange < 3:
@@ -91,7 +91,7 @@ class LaserRot(object):
                 table.putNumber("coprocessorPort", -0.4)
                 table.putNumber("coprocessorStarboard", 0.4)
                 print("Go Straight")
-                #print(bigangle) 
+                #print(bigangle)
 
 rospy.init_node("compute_closest_obstcl")
 r=rospy.Rate(10)
