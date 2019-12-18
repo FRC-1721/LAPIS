@@ -38,30 +38,35 @@ logging.basicConfig(level=logging.DEBUG)
 from geometry_msgs.msg import Twist
 from networktables import NetworkTables
 
-rospy.init_node("robot_control")
+def clamp(speed, minspeed, maxspeed):
+    return max(min(maxspeed, speed), minspeed)
 
-ip = rospy.get_param("~ip", "10.17.21.2")
-print ("Starting NetworkTables(Robot Control) using IP: ", ip)
-NetworkTables.initialize(server = ip)
-table = NetworkTables.getTable("ROS")
+class robot_control:
+    def callback(self, msg):
+        thro = msg.linear.x # Scale the robot based off its max total speed
+        steerage = msg.angular.z
+        print("Thro:" + str(clamp(thro, self.max_speed * -1, self.max_speed)) + ", Attempted:" + str(thro) + ", Steerage:" + str(clamp(steerage, self.max_spin * -1, self.max_spin)) + ", Attempted:" + str(steerage) + "\r")
+        
+        thro = clamp(thro, self.max_speed * -1, self.max_speed)
+        steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
 
-max_speed = rospy.get_param("~max_speed", 2) # The max speed of the robot in m/s
-max_spin = rospy.get_param("~max_spin", 9) # The max turn speed of the robot in rad/s (rpm * 2)
+        self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels
+        self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels
 
-def callback(msg):
-    thro = msg.linear.x # Scale the robot based off its max total speed
-    steerage = msg.angular.z
-    print("Thro:" + str(thro) + ", Steerage:" + str(steerage) + "\r")
-    if(abs(thro) > max_speed) or (abs(steerage) > max_spin):
-        print("Overspeed!")
+    def start_listener(self):
+        rospy.init_node('cmd_vel_hungry_toaster')
+        rospy.Subscriber("/cmd_vel", Twist, self.callback)
+        self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
+        self.max_spin = rospy.get_param("~max_spin", 0.5) # The max turn speed of the robot in rad/s (rpm * 2)
+        
+        self.ip = rospy.get_param("~ip", "10.17.21.2")
+        print ("Starting NetworkTables(Robot Control) using IP: ", self.ip)
+        NetworkTables.initialize(server = self.ip)
+        self.table = NetworkTables.getTable("ROS")
 
-    table.putNumber("coprocessorPort", thro + steerage) # Set port wheels
-    table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels
-
-def start_listener():
-    rospy.init_node('cmd_vel_hungry_toaster')
-    rospy.Subscriber("/cmd_vel", Twist, callback)
-    rospy.spin()
-
+        
 if __name__ == '__main__':
-    start_listener()
+    r = robot_control()
+    r.start_listener()
+    
+    rospy.spin()

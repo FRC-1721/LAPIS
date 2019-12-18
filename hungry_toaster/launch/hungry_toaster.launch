@@ -29,9 +29,9 @@
   <!-- Intepert Twist for the rio to understand -->
   <node name="robot_control" pkg="robot_control" type="robot_control.py" output="screen">
     <!-- Never calibrated -->
-    <param name="max_speed" type="int" value="10" />
+    <param name="max_speed" type="int" value="1" />
+	<param name="max_spin" type="double" value="1" />
     <param name="ip" type="string" value="10.17.21.2" />
-    <param name="max_spin" type="int" value="100" />
   </node>
 
 </launch>

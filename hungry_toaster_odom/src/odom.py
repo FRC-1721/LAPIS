@@ -99,8 +99,11 @@ class Odom:
         if (th != 0):
             self.th = self.th + th
         
-        self.twist.linear.x = ((1 - smoothing) * self.twist.linear.x) + (smoothing * self.dx)
-        self.twist.angular.z = ((1 - smoothing) * self.twist.angular.z) + (smoothing * self.dr)
+        #self.twist.linear.x = ((1 - smoothing) * self.twist.linear.x) + (smoothing * self.dx)
+        #self.twist.angular.z = ((1 - smoothing) * self.twist.angular.z) + (smoothing * self.dr)
+        
+        self.twist.linear.x = self.dx
+        self.twist.angular.z = self.dr
 
     def publish(self):
         # publish or perish
@@ -162,7 +165,7 @@ if __name__ == "__main__":
         
         # Indexing tools and debug
         if index == 1:
-            print("Got " + str(checksum) + " out of 255 messages last run.")
+            #print("Got " + str(checksum) + " out of 255 messages last run.")
             checksum = 1
         
         # debug
