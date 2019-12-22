@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # FRC mDNS almost never works - 10.17.21.55 is RIO
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-    print "Starting NetworkTables using IP: ", ip
+    print ("Starting NetworkTables using IP: ", ip)
     NetworkTables.initialize(server = ip)
     robotTable = NetworkTables.getTable('ROS')
 
