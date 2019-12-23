@@ -39,17 +39,20 @@ from geometry_msgs.msg import Twist
 from networktables import NetworkTables
 
 def clamp(speed, minspeed, maxspeed):
-    return max(min(maxspeed, speed), minspeed)
+    output_speed = max(min(maxspeed, speed), minspeed)
+    if speed != output_speed:
+        print("Overspeed!")
+    return output_speed
 
 class robot_control:
     def callback(self, msg):
         thro = msg.linear.x # Scale the robot based off its max total speed
         steerage = msg.angular.z
-        print("Thro:" + str(clamp(thro, self.max_speed * -1, self.max_speed)) + ", Attempted:" + str(thro) + ", Steerage:" + str(clamp(steerage, self.max_spin * -1, self.max_spin)) + ", Attempted:" + str(steerage) + "\r")
         
         thro = clamp(thro, self.max_speed * -1, self.max_speed)
         steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
 
+        # The math here needs to be upgraded
         self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels
         self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels
 
@@ -58,6 +61,7 @@ class robot_control:
         rospy.Subscriber("/cmd_vel", Twist, self.callback)
         self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
         self.max_spin = rospy.get_param("~max_spin", 0.5) # The max turn speed of the robot in rad/s (rpm * 2)
+        self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
         
         self.ip = rospy.get_param("~ip", "10.17.21.2")
         print ("Starting NetworkTables(Robot Control) using IP: ", self.ip)
