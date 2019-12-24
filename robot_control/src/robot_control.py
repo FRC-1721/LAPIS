@@ -41,7 +41,7 @@ from networktables import NetworkTables
 def clamp(speed, minspeed, maxspeed):
     output_speed = max(min(maxspeed, speed), minspeed)
     if speed != output_speed:
-        print("Overspeed!")
+        logging.warning("Overspeed!")
     return output_speed
 
 class robot_control:
@@ -64,7 +64,7 @@ class robot_control:
         self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
         
         self.ip = rospy.get_param("~ip", "10.17.21.2")
-        print ("Starting NetworkTables(Robot Control) using IP: ", self.ip)
+        logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
         NetworkTables.initialize(server = self.ip)
         self.table = NetworkTables.getTable("ROS")
 

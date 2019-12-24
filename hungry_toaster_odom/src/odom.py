@@ -30,6 +30,7 @@
 
 import rospy
 import sys
+import logging
 
 from math import sin, cos
 
@@ -137,10 +138,11 @@ class Odom:
 if __name__ == "__main__":
 
     rospy.init_node("odom")
+    logging.basicConfig(level=logging.INFO) # Setup the logging level
 
     # FRC mDNS almost never works - 10.17.21.55 is RIO
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-    print ("Starting NetworkTables using IP: ", ip)
+    logging.info("Starting NetworkTables using IP: " + ip)
     NetworkTables.initialize(server = ip)
     robotTable = NetworkTables.getTable('ROS')
 
@@ -165,13 +167,13 @@ if __name__ == "__main__":
         
         # Indexing tools and debug
         if index == 1:
-            #print("Got " + str(checksum) + " out of 255 messages last run.")
+            logging.debug("Got " + str(checksum) + " out of 255 messages last run.")
             checksum = 1
         
         # debug
         error = ""
         if odom.twist.angular.z > 3:
             error = " Look!"
-        #print(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
+        logging.debug(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
 
         rate.sleep()
