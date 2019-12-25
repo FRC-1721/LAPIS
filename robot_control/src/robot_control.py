@@ -58,6 +58,8 @@ class robot_control:
         self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels in m/s
         self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels in m/s
 
+        logging.debug("Sent commands " + str(thro + steerage) + ", " + str(thro - steerage) + ", (Port) (Starboard)")
+
     def start_listener(self):
         rospy.init_node('cmd_vel_hungry_toaster')
         rospy.Subscriber("/cmd_vel", Twist, self.callback)
