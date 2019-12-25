@@ -47,14 +47,14 @@ def clamp(speed, minspeed, maxspeed):
 class robot_control:
     def callback(self, msg):
         thro = msg.linear.x # Scale the robot based off its max total speed
-        steerage = msg.angular.z
-        
         thro = clamp(thro, self.max_speed * -1, self.max_speed)
+        steerage = msg.angular.z # Rads/s
         steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
 
-        # The math here needs to be upgraded
-        self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels
-        self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels
+        steerage = steerage / (0.5 * self.wheel_base / 39.34) # The new value of steerage(ms) is equal to the old value of (steerage(rads/s) / (0.5 * wheelbase / 39.34)
+
+        self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels in m/s
+        self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels in m/s
 
     def start_listener(self):
         rospy.init_node('cmd_vel_hungry_toaster')
