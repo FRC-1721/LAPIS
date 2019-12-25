@@ -3,11 +3,11 @@
 	<head>
 		<meta charset="utf-8" />
 
-		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"/>
 
 		<script type="text/javascript" type="text/javascript">
 			var ros = new ROSLIB.Ros({
-			url : 'ws://'.concat(location.host,':9090')
+			url : 'ws://localhost:9090'
 			});
 
 			ros.on('connection', function() {
@@ -25,8 +25,10 @@
 	</head>
 
 	<body>
-		<h1>Hungry Toaster Web Interface</h1>
-		<p>Connection status: <span id="status"></span></p>
-		<p>Last /txt_msg received: <span id="msg"></span></p>
+		<h1>Simple ROS User Interface</h1>
+		<p>Connection status: <span id="status"/>
+		</p>
+		<p>Last /txt_msg received: <span id="msg"/>
+		</p>
 	</body>
 </html>
