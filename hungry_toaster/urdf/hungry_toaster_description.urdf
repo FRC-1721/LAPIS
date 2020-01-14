@@ -22,4 +22,19 @@
       </geometry>
     </visual>
   </link>
+  
+  <joint name="base_link_to_limelight" type="fixed">
+    <parent link="base_link"/>
+    <child link="limelight"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="limelight">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.0254 0.09779 0.05715 "/>
+      </geometry>
+    </visual>
+  </link>
 </robot>
