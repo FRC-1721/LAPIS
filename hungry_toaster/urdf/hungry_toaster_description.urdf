@@ -1,4 +1,13 @@
 <robot name="hungry_toaster">
+
+  <material name="green">
+	<color rgba="0 1 0 1"/>
+  </material>
+
+  <material name="grey">
+	<color rgba="0.1 0.1 0.1 1"/>
+  </material>
+
   <link name="base_link">
     <visual>
       <origin rpy="0 0 1.57" xyz="0.2 0 0.15"/>
@@ -20,6 +29,7 @@
       <geometry>
         <cylinder length="0.1016" radius="0.0508"/>
       </geometry>
+	  <material name="grey"/>
     </visual>
   </link>
   
@@ -31,10 +41,11 @@
 
   <link name="limelight">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 -0.1 0" xyz="0.5 -0.3 0.1"/>
       <geometry>
         <box size="0.0254 0.09779 0.05715 "/>
       </geometry>
+	  <material name="green"/>
     </visual>
   </link>
 </robot>
