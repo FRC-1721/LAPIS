@@ -63,7 +63,7 @@ class robot_control:
     def start_listener(self):
         rospy.init_node('cmd_vel_hungry_toaster')
         rospy.Subscriber("/cmd_vel", Twist, self.callback)
-        self.max_speed = rospy.get_param("~max_speed", 0.3) # The max speed of the robot in m/s
+        self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
         self.max_spin = rospy.get_param("~max_spin", 0.5) # The max turn speed of the robot in rad/s (rpm * 2)
         self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
         
