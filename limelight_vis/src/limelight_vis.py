@@ -51,10 +51,14 @@ if __name__ == "__main__":
     NetworkTables.initialize(server = ip)
     robotTable = NetworkTables.getTable("limelight")
     
+    # Setup Camera Streams
+    
+    
     rate = rospy.Rate(20)  # in Hz
     while not rospy.is_shutdown():  # runs for as long as the node is running
         tx = radians(float(robotTable.getNumber('tx', '1'))) # Convert the float converting the double into 
         ty = radians(float(robotTable.getNumber('ty', '1')))
+        ta = float(robotTable.getNumber('ty', '1'))
         
         marker = Marker()
         #marker.header.frame_id = "limelight"
