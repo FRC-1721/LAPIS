@@ -157,8 +157,8 @@ if __name__ == "__main__":
     checksum = 1 # Helps us keep track of how many messages we got overall
     while not rospy.is_shutdown():  # runs for as long as the node is running
         # Get the encoder counts - have to invert left
-        left = -float(robotTable.getNumber('Port','100000'))
-        right = float(robotTable.getNumber('Starboard','100000'))
+        left = -float(robotTable.getNumber('Port','0'))
+        right = float(robotTable.getNumber('Starboard','0'))
         index = int(robotTable.getNumber('rosIndex','0'))
 	#print(left, right, index)
         #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
