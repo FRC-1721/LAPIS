@@ -47,7 +47,7 @@ def clamp(speed, minspeed, maxspeed):
 class robot_control:
     def callback(self, msg):
         thro = msg.linear.x # Scale the robot based off its max total speed
-        steerage = msg.angular.z # Rads/s
+        steerage = msg.angular.z * self.wheel_base / 2.0 # the sum of the travel of both wheels is equal to the arc created by the wheel base for any given rotation
 
         # This equation by ka2qfx
         steerage = steerage / (0.5 * self.wheel_base / 39.34) # The new value of steerage(ms) is equal to the old value of (steerage(rads/s) / (0.5 * wheelbase / 39.34)
@@ -63,9 +63,11 @@ class robot_control:
     def start_listener(self):
         rospy.init_node('cmd_vel_hungry_toaster')
         rospy.Subscriber("/cmd_vel", Twist, self.callback)
-        self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
-        self.max_spin = rospy.get_param("~max_spin", 0.5) # The max turn speed of the robot in rad/s (rpm * 2)
+
+        
         self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
+        self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
+        self.max_spin = rospy.get_param("~max_spin", 0.5) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s (rpm * 2)
         
         self.ip = rospy.get_param("~ip", "10.17.21.2")
         logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
