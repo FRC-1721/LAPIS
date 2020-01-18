@@ -103,9 +103,6 @@ class Odom:
         
         self.twist.linear.x = ((1 - self.smoothing) * self.twist.linear.x) + (self.smoothing * self.dx)
         self.twist.angular.z = ((1 - self.smoothing) * self.twist.angular.z) + (self.smoothing * self.dr)
-        
-        #self.twist.linear.x = self.dx
-        #self.twist.angular.z = self.dr
 
     def publish(self):
         # publish or perish
