@@ -141,9 +141,8 @@ if __name__ == "__main__":
     # FRC mDNS almost never works - 10.17.21.55 is RIO
     ip = rospy.get_param("~ip", "roboRIO-1721-FRC:5800")
     logging.info("Starting NetworkTables using IP: " + ip)
-    #NetworkTables.DEFAULT_PORT=5800
     NetworkTables.initialize(server = ip)
-    NetworkTables.setServer([("10.17.21.2", 5800), ])
+    NetworkTables.setServer([(ip, 5800), ])
     robotTable = NetworkTables.getTable('ROS')
     NetworkTables.setUpdateRate(0.01)
 

@@ -70,7 +70,7 @@ class robot_control:
         self.ip = rospy.get_param("~ip", "10.17.21.2")
         logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
         NetworkTables.initialize(server = self.ip)
-        NetworkTables.setServer([("10.17.21.2", 5800)])
+        NetworkTables.setServer([(ip, 5800)])
         self.table = NetworkTables.getTable("ROS")
 
         
