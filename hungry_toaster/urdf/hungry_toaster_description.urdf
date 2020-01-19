@@ -36,12 +36,12 @@
   <joint name="base_link_to_limelight" type="fixed">
     <parent link="base_link"/>
     <child link="limelight"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <origin rpy="0 -0.1 0" xyz="0.5 -0.3 0.1"/>
   </joint>
 
   <link name="limelight">
     <visual>
-      <origin rpy="0 -0.1 0" xyz="0.5 -0.3 0.1"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
       <geometry>
         <box size="0.0254 0.09779 0.05715 "/>
       </geometry>
