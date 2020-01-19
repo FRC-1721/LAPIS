@@ -49,11 +49,9 @@ class robot_control:
         thro = msg.linear.x # Scale the robot based off its max total speed
         steerage = msg.angular.z * self.wheel_base / 2.0 # the sum of the travel of both wheels is equal to the arc created by the wheel base for any given rotation
 
-        # This equation by ka2qfx
-        steerage = steerage / (0.5 * self.wheel_base / 39.34) # The new value of steerage(ms) is equal to the old value of (steerage(rads/s) / (0.5 * wheelbase / 39.34)
-
         thro = clamp(thro, self.max_speed * -1, self.max_speed)
         steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
+        print(steerage)
 
         self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels in m/s
         self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels in m/s
@@ -64,20 +62,18 @@ class robot_control:
         rospy.init_node('cmd_vel_hungry_toaster')
         rospy.Subscriber("/cmd_vel", Twist, self.callback)
 
-        
-        self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
-        self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
-        self.max_spin = rospy.get_param("~max_spin", 0.25) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s (rpm * 2)
-        
+        self.wheel_base = rospy.get_param("~wheel_base", 1.0) # The robot's wheelbase in meters
+        self.max_speed = rospy.get_param("~max_speed", 1.5) # The max speed of the robot in m/s
+        self.max_spin = rospy.get_param("~max_spin", 1.5) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s
+
         self.ip = rospy.get_param("~ip", "10.17.21.2")
         logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
         NetworkTables.initialize(server = self.ip)
         NetworkTables.setServer([(self.ip, 5800)])
         self.table = NetworkTables.getTable("ROS")
 
-        
+
 if __name__ == '__main__':
     r = robot_control()
     r.start_listener()
-    
     rospy.spin()
