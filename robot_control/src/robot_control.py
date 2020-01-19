@@ -67,12 +67,12 @@ class robot_control:
         
         self.wheel_base = rospy.get_param("~wheel_base", 1) # The robot's wheelbase in meters
         self.max_speed = rospy.get_param("~max_speed", 1) # The max speed of the robot in m/s
-        self.max_spin = rospy.get_param("~max_spin", 0.5) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s (rpm * 2)
+        self.max_spin = rospy.get_param("~max_spin", 0.25) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s (rpm * 2)
         
         self.ip = rospy.get_param("~ip", "10.17.21.2")
         logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
         NetworkTables.initialize(server = self.ip)
-        NetworkTables.setServer([(ip, 5800)])
+        NetworkTables.setServer([(self.ip, 5800)])
         self.table = NetworkTables.getTable("ROS")
 
         
