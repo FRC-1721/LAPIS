@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8" />
-
-		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"/>
-
+		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 		<script type="text/javascript" type="text/javascript">
 			var ros = new ROSLIB.Ros({
-			url : 'ws://localhost:9090'
+			url : 'ws://10.17.21.102:9090'
 			});
-
 			ros.on('connection', function() {
 			document.getElementById("status").innerHTML = "Connected";
 			});
@@ -17,18 +14,48 @@
 			ros.on('error', function(error) {
 			document.getElementById("status").innerHTML = "Error";
 			});
-
+			
 			ros.on('close', function() {
 			document.getElementById("status").innerHTML = "Closed";
 			});
+			console.log(document.getElementById("status"));
+
 		</script>
+		<style>
+			
+			@font-face {
+				font-family: 'perfect_dos_vga_437regular';
+				src: url('perfect_dos_vga_437-webfont.woff2') format('woff2'),
+					url('perfect_dos_vga_437-webfont.woff') format('woff');
+				font-weight: normal;
+				font-style: normal;
+			}	
+			body {
+				background-color: #0000AA;
+			}
+			h1 {
+				color: #FFFFFF;
+				text-align: center;
+				font-family:'Perfect DOS VGA 437';
+			}
+			p {
+				font-size: 20px;
+				white-space: pre;
+				color: #FFFFFF;
+				text-align: left;
+				font-family:'Perfect DOS VGA 437';
+				padding: 10px;
+				border-width: 4px;
+				border-style:solid;
+				border-color:#FFFFFF;
+				height:83vh;
+			} 
+		</style>
 	</head>
 
 	<body>
-		<h1>Simple ROS User Interface</h1>
+		<h1>ROS Interface Board</h1>
 		<p>Connection status: <span id="status"/>
-		</p>
-		<p>Last /txt_msg received: <span id="msg"/>
 		</p>
 	</body>
 </html>
