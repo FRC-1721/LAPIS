@@ -38,26 +38,42 @@ logging.basicConfig(level=logging.DEBUG)
 from geometry_msgs.msg import Twist
 from networktables import NetworkTables
 
-ip = "roboRIO-1721-FRC"
-#ip = "localhost" # For debugging
-print ("Starting NetworkTables(Robot Control) using IP: ", ip)
-NetworkTables.initialize(server = ip)
-table = NetworkTables.getTable("ROS")
+def clamp(speed, minspeed, maxspeed):
+    output_speed = max(min(maxspeed, speed), minspeed)
+    if speed != output_speed:
+        logging.warning("Overspeed!")
+    return output_speed
 
-steerage_p = 0.3
+class robot_control:
+    def callback(self, msg):
+        thro = msg.linear.x # Scale the robot based off its max total speed
+        steerage = msg.angular.z * self.wheel_base / 2.0 # the sum of the travel of both wheels is equal to the arc created by the wheel base for any given rotation
 
-def callback(msg):
-    thro = msg.linear.x # x is forward of the robot no matter what
-    steerage = msg.angular.z * steerage_p # In radians, equates to speed
-    print(thro)
+        thro = clamp(thro, self.max_speed * -1, self.max_speed)
+        steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
+        print(steerage)
 
-    table.putNumber("coprocessorPort", (thro + steerage) * -1) # Set port wheels
-    table.putNumber("coprocessorStarboard", (thro - steerage)) # Set starboard wheels
+        self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels in m/s
+        self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels in m/s
 
-def start_listener():
-    rospy.init_node('cmd_vel_hungry_toaster')
-    rospy.Subscriber("/cmd_vel", Twist, callback)
-    rospy.spin()
+        logging.debug("Sent commands " + str(thro + steerage) + ", " + str(thro - steerage) + ", (Port) (Starboard)")
+
+    def start_listener(self):
+        rospy.init_node('cmd_vel_hungry_toaster')
+        rospy.Subscriber("/cmd_vel", Twist, self.callback)
+
+        self.wheel_base = rospy.get_param("~wheel_base", 1.0) # The robot's wheelbase in meters
+        self.max_speed = rospy.get_param("~max_speed", 1.5) # The max speed of the robot in m/s
+        self.max_spin = rospy.get_param("~max_spin", 1.5) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s
+
+        self.ip = rospy.get_param("~ip", "10.17.21.2")
+        logging.info("Starting NetworkTables(Robot Control) using IP: " + self.ip)
+        NetworkTables.initialize(server = self.ip)
+        NetworkTables.setServer([(self.ip, 5800)])
+        self.table = NetworkTables.getTable("ROS")
+
 
 if __name__ == '__main__':
-    start_listener()
+    r = robot_control()
+    r.start_listener()
+    rospy.spin()
