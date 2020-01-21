@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-		<script type="text/javascript" type="text/javascript">
+<!DOCTYPE html><html><head><script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script><script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script><script type="text/javascript" type="text/javascript">
 			var ros = new ROSLIB.Ros({
 			url : 'ws://10.17.21.102:9090'
 			});
@@ -20,9 +15,67 @@
 			});
 			console.log(document.getElementById("status"));
 
-		</script>
-		<style>
+			var butNum = 1;
+			var mapStyle = 1;
+			document.addEventListener('keypress', logKey);
+			function logKey (e){
+				if (e.keyCode == 119){
+					butNum--;
+				}
+				if (e.keyCode == 115){
+					butNum++;
+				}
+				if(butNum == 4){
+					butNum = 1;
+				}
+				if(butNum == 0){
+					butNum = 3;
+				}
+				if(butNum == 1){
+					document.getElementById("mapButton").style.backgroundColor='#cccc55';
+				} else {
+					document.getElementById("mapButton").style.backgroundColor='#0000aa';
+				}
+				if(butNum == 2){
+					document.getElementById("mapStyleButton").style.backgroundColor='#cccc55';
+				} else {
+					document.getElementById("mapStyleButton").style.backgroundColor='#0000aa';
+				}
+				if(butNum == 3){
+					document.getElementById("button2").style.backgroundColor='#cccc55';
+				} else {
+					document.getElementById("button2").style.backgroundColor='#0000aa';
+				}
+				if(butNum==1){
+				document.getElementById("desk").innerHTML = "JOe";
+				}
+				if(butNum==2){
+				document.getElementById("desk").innerHTML = "This modifies the style of the map, with the following outputs:<br></br>Authentic ASCII - Gives an authentic ASCII style field map, for the true 1980's feel<br></br>Colorized ASCII - For those who think there too cool for authentic ASCII, this is a colorized map of the field, but still retains that ASCII feel<br></br>Genaric PNG - For those who like the idea of navigating a website using a mouse, this map is a cheap PNG of the field. It may look better, but what is more important, a website that works or a website that functions like the BIOS on a 20 year old computer?<br></br>Current Style: <span id='cStyle'></span>";
+					if(e.keyCode == 13){
+						mapStyle++
+						if(mapStyle>=4){
+							mapStyle = 1;
+						}
+					}
+					if(mapStyle == 1){
+						document.getElementById("cStyle").innerHTML = "Authentic ASCII";
+					}
+					if(mapStyle == 2){
+						document.getElementById("cStyle").innerHTML = "Colorized ASCII";
+					}
+					if(mapStyle == 3){
+						document.getElementById("cStyle").innerHTML = "Generic PNG";
+					}
+					
+				}
+				if(butNum==3){
+				document.getElementById("desk").innerHTML = "desk";
+				}
+
+			}
 			
+
+		</script><style>
 			@font-face {
 				font-family: 'perfect_dos_vga_437regular';
 				src: url('perfect_dos_vga_437-webfont.woff2') format('woff2'),
@@ -38,24 +91,39 @@
 				text-align: center;
 				font-family:'Perfect DOS VGA 437';
 			}
-			p {
-				font-size: 20px;
+			leftBox {
 				white-space: pre;
 				color: #FFFFFF;
 				text-align: left;
 				font-family:'Perfect DOS VGA 437';
+				font-size: 20px;
+
 				padding: 10px;
 				border-width: 4px;
 				border-style:solid;
 				border-color:#FFFFFF;
-				height:83vh;
-			} 
-		</style>
-	</head>
 
-	<body>
-		<h1>ROS Interface Board</h1>
-		<p>Connection status: <span id="status"/>
-		</p>
-	</body>
-</html>
+				position:absolute;
+				height:83vh;
+				top:10vh;
+				width:calc(50vw - 33px);
+			} 
+			rightBox {
+				width: calc(50vw - 33px);
+				left:calc(50vw);
+				height:83vh;
+				position:absolute;
+				top:10vh;
+
+				color: #FFFFFF;
+				text-align: left;
+				font-family:'Perfect DOS VGA 437';
+				font-size: 20px;
+				
+				
+				padding: 10px;
+				border-width: 4px;
+				border-style:solid;
+				border-color:#FFFFFF;
+			}
+			</style></head><body><h1>ROS Interface Board</h1><leftBox>Connection status: <span id="status"/>Connecting...</span><br></br><span id="mapButton"/>Field Map</span><br></br><span id="mapStyleButton"/>Map Style</span><br></br><span id="button2"/>Button 2</span></leftBox><rightBox><span id="desk"/>Descriptor Area</span></rightBox></body></html>
