@@ -34,7 +34,10 @@
 				if(butNum == 1){
 					document.getElementById("mapButton").style.backgroundColor='#cccc55';
 					if(mapStyle==1){
-						document.getElementById("desk").innerHTML="Map of the field:<br></br>      ___________________<br></br>  _-'' '-_-'      '-_-' ''-_<br></br> |                          |<br></br> |                          |<br></br> |                          |<br></br> |--------------------------|<br></br> |                          |<br></br> |                          |<br></br> |____            _      ___|<br></br> |    |     __--'' |    |   |<br></br> |'/\\'|_--'' |      |   |   |<br></br> |_\\/_||      |      |  |   |<br></br> |    | |      |      | |   |<br></br> |    |  |      |      ||---|<br></br> |    |   |      |  __-%|( )|<br></br> |    |    |  __--''    |'''|<br></br> |____|    %''          |___|<br></br> |                          |<br></br> |                          |<br></br> |__________________________|<br></br> |                          |<br></br> |                          |<br></br> |                          |<br></br>  --_   /^\\        /^\\   _--<br></br>     '''___'______'___''' <br></br>"					} else if(mapStyle==2){
+						document.getElementById("desk").innerHTML="Map of the field:<br></br>      ___________________<br></br>  _-'' '-_-'      '-_-' ''-_<br></br> |                          |<br></br> |                          |<br></br> |                          |<br></br> |--------------------------|<br></br> |                          |<br></br> |                          |<br></br> |____            _      ___|<br></br> |    |     __--'' |    |   |<br></br> |'/\\'|_--'' |      |   |   |<br></br> |_\\/_||      |      |  |   |<br></br> |    | |      |      | |   |<br></br> |    |  |      |      ||---|<br></br> |    |   |      |  __-%|( )|<br></br> |    |    |  __--''    |'''|<br></br> |____|    %''          |___|<br></br> |                          |<br></br> |                          |<br></br> |__________________________|<br></br> |                          |<br></br> |                          |<br></br> |                          |<br></br>  --_   /^\\        /^\\   _--<br></br>     '''___'______'___''' <br></br>"
+						document.getElementById("desk").style.whiteSpace = "pre";
+						document.getElementById("desk").style.lineHeight = "10px";
+						} else if(mapStyle==2){
 						document.getElementById("desk").innerHTML="map style 2, colorASCII"
 					}
 					else if(mapStyle==3){
@@ -44,6 +47,8 @@
 					document.getElementById("mapButton").style.backgroundColor='#0000aa';
 				}
 				if(butNum == 2){
+					document.getElementById("desk").style.lineHeight='20px';
+					document.getElementById("desk").style.whiteSpace='normal';
 					document.getElementById("mapStyleButton").style.backgroundColor='#cccc55';
 					document.getElementById("desk").innerHTML = "This modifies the style of the map, with the following outputs:<br></br>Authentic ASCII - Gives an authentic ASCII style field map, for the true 1980's feel<br></br>Colorized ASCII - For those who think there too cool for authentic ASCII, this is a colorized map of the field, but still retains that ASCII feel<br></br>Genaric PNG - For those who like the idea of navigating a website using a mouse, this map is a cheap PNG of the field. It may look better, but what is more important, a website that works or a website that functions like the BIOS on a 20 year old computer?<br></br>Current Style: <span id='cStyle'></span>";
 					if(e.keyCode == 13){
@@ -75,7 +80,7 @@
 				}
 
 			}
-			
+				
 
 		</script><style>
 			@font-face {
@@ -99,7 +104,7 @@
 				text-align: left;
 				font-family:'Perfect DOS VGA 437';
 				font-size: 20px;
-
+				
 				padding: 10px;
 				border-width: 4px;
 				border-style:solid;
@@ -116,17 +121,14 @@
 				height:83vh;
 				position:absolute;
 				top:10vh;
-				white-space: pre;
 
 				color: #FFFFFF;
 				text-align: left;
 				font-family:'Perfect DOS VGA 437';
 				font-size: 20px;
-				word-break: break-all;
 				overflow-wrap: break-word;
 				line-height: 10px;
-				
-				
+
 				padding: 10px;
 				border-width: 4px;
 				border-style:solid;
