@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Int32
 
 def nt_publisher():
     # Create publisher topics
-    starboard_encoder = rospy.Publusher('starboard_encoder', Double, queue_size=10)
-    port_encoder = rospy.Publusher('port_encoder', Double, queue_size=10)
+    starboard_encoder = rospy.Publisher('starboard_encoder', Int32, queue_size=10)
+    port_encoder = rospy.Publisher('port_encoder', Int32, queue_size=10)
     # Init node
     rospy.init_node('nt_interface', anonymous=True)
     rate = rospy.Rate(10) # In hz
