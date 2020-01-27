@@ -1,0 +1,35 @@
+<launch>
+
+  <!-- upload urdf -->
+  <param name="robot_description" textfile="$(find unnamed_toaster)/urdf/unnamed_toaster_description.urdf" />
+
+  <!-- robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" />
+
+  <!-- TODO: replace with alternate state publisher -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"/>
+
+  <!-- laser -->
+  <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen">
+    <param name="serial_port" type="string" value="/dev/ttyUSB0"/>
+    <param name="serial_baudrate" type="int" value="115200"/>
+    <param name="frame_id" type="string" value="laser"/>
+    <param name="inverted" type="bool" value="false"/>
+    <param name="angle_compensate" type="bool" value="true"/>
+  </node>
+
+  <!-- Get odom from RIO, publish to ROS -->
+  <node name="odom" pkg="unnamed_toaster_odom" type="odom.py" output="screen">
+    <!-- calibrated Oct 16 2019 -->
+    <param name="ticks_meter" type="int" value="10000" />
+    <param name="base_width" value="0.625" />
+    <param name="ip" type="string" value="10.17.21.2" />
+  </node>
+  
+  <!-- Intepert Twist for the rio to understand -->
+  <node name="robot_control" pkg="robot_control" type="robot_control.py" output="screen">
+    <!-- Never calibrated -->
+    <param name="ip" type="string" value="10.17.21.2" />
+  </node>
+
+</launch>
