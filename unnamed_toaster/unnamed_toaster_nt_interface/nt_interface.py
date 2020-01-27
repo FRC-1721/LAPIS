@@ -21,6 +21,6 @@ def nt_publisher():
 
 if __name__ == '__main__':
     try:
-        talker()
+        nt_publisher()
     except rospy.ROSInterruptException:
         pass # Helps when exiting using Ctrl + C 
