@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+hungry_toaster_limelight(VERSION 2.8.3)
 project(limelight_vis)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
