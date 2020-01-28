@@ -12,8 +12,8 @@ def nt_publisher():
     rate = rospy.Rate(10) # In hz
 
     while not rospy.is_shutdown():
-        nt_value_starboard_encoder = "0.0"
-        nt_value_port_encoder = "0.0"
+        nt_value_starboard_encoder = "0"
+        nt_value_port_encoder = "0"
         rospy.loginfo("Got values from NT, current index is: " + str(0))
         starboard_encoder.publish(nt_value_starboard_encoder)
         port_encoder.publish(nt_value_port_encoder)
