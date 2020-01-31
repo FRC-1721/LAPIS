@@ -32,4 +32,10 @@
     <param name="ip" type="string" value="10.17.21.2" />
   </node>
 
+  <!-- Start NT Adapter -->
+  <node name="nt_interface" pkg="nt_interface" type="nt_interface.py" output="screen">
+    <!-- Never calibrated -->
+    <param name="ip" type="string" value="10.17.21.2" />
+  </node>
+
 </launch>
