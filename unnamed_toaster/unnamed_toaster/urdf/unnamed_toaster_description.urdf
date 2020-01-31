@@ -1,11 +1,11 @@
 <robot name="unnamed">
 
   <material name="green">
-	<color rgba="0 1 0 1"/>
+    <color rgba="0 1 0 1"/>
   </material>
 
   <material name="grey">
-	<color rgba="0.1 0.1 0.1 1"/>
+    <color rgba="0.1 0.1 0.1 1"/>
   </material>
 
   <link name="base_link">
@@ -46,6 +46,22 @@
         <box size="0.0254 0.09779 0.05715 "/>
       </geometry>
 	  <material name="green"/>
+    </visual>
+  </link>
+
+  <joint name="base_link_to_ml_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="ml_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+
+  <link name="ml_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.0254 0.09779 0.05715 "/>
+      </geometry>
+	  <material name="grey"/>
     </visual>
   </link>
 </robot>
