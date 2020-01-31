@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     Copyright (c) 2019-2020 Concord Robotics Inc.
     Copyright (c) 2010-2011 Vanadium Labs LLC.
@@ -29,21 +27,14 @@
 """
 
 import rospy
-import sys
-import logging
-
 from math import sin, cos
 
 from geometry_msgs.msg import Quaternion, Twist
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
 
-from networktables import NetworkTables
-import logging	# Required
-logging.basicConfig(level=logging.DEBUG)
-
 ## Based off vanadiumlabs/arbotix_ros::DiffController
-class Odom:
+class RobotOdom:
 
     def __init__(self):
         # parameters: rates and geometry
@@ -68,7 +59,7 @@ class Odom:
         # subscriptions
         self.odomPub = rospy.Publisher("odom", Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
-        
+
         # Smoothing
         self.smoothing = 0.3
 
@@ -100,7 +91,7 @@ class Odom:
             self.y = self.y + (sin(self.th)*x + cos(self.th)*y)
         if (th != 0):
             self.th = self.th + th
-        
+
         self.twist.linear.x = ((1 - self.smoothing) * self.twist.linear.x) + (self.smoothing * self.dx)
         self.twist.angular.z = ((1 - self.smoothing) * self.twist.angular.z) + (self.smoothing * self.dr)
 
@@ -132,48 +123,3 @@ class Odom:
         odom.twist.twist.linear.y = 0
         odom.twist.twist.angular.z = self.twist.angular.z
         self.odomPub.publish(odom)
-
-if __name__ == "__main__":
-
-    rospy.init_node("odom")
-    logging.basicConfig(level=logging.INFO) # Setup the logging level
-
-    # FRC mDNS almost never works - 10.17.21.55 is RIO
-    ip = rospy.get_param("~ip", "roboRIO-1721-FRC:5800")
-    logging.info("Starting NetworkTables using IP: " + ip)
-    NetworkTables.initialize(server = ip)
-    NetworkTables.setServer([(ip, 5800), ])
-    robotTable = NetworkTables.getTable('ROS')
-    NetworkTables.setUpdateRate(0.01)
-
-    odom = Odom()
-
-    rate = rospy.Rate(50)  # in Hz
-    previous_index = 0 # for not updating the odom with junk values
-    checksum = 1 # Helps us keep track of how many messages we got overall
-    while not rospy.is_shutdown():  # runs for as long as the node is running
-        # Get the encoder counts - have to invert left
-        left = -float(robotTable.getNumber('Port','0'))
-        right = float(robotTable.getNumber('Starboard','0'))
-        index = int(robotTable.getNumber('rosIndex','0'))
-	#print(left, right, index)
-        #robotTable.putNumber("rosTime",int(rospy.Time.now())) # Publish the ros time back
-        # Update and publish odometry
-        if index != previous_index: # As long as its different from the previous
-            odom.update(left, right) # Update the odom
-            checksum = checksum + 1 # Remember this index
-        odom.publish()
-        previous_index = index # Set the current watchdog to old
-        
-        # Indexing tools and debug
-        if index == 1:
-            logging.debug("Got " + str(checksum) + " out of 255 messages last run.")
-            checksum = 1
-        
-        # debug
-        error = ""
-        if odom.twist.angular.z > 3:
-            error = " Look!"
-        logging.debug(str(left) + " " + str(right) + str(odom.twist.linear.x) + " " + str(odom.twist.angular.z) + error + " " + str(index))
-
-        rate.sleep()
