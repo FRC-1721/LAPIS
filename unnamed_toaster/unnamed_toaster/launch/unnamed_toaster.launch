@@ -26,4 +26,9 @@
     <param name="ip" type="string" value="10.17.21.2" />
   </node>
 
+  <!-- Start Limelight Network Table Adapter -->
+  <node name="limelight_table_interface" pkg="unnamed_toaster_hw_interface" type="ros_table_interface.py" output="screen">
+    <param name="ip" type="string" value="10.17.21.2" />
+  </node>
+
 </launch>
