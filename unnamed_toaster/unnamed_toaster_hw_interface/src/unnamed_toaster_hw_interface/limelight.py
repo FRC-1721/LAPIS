@@ -41,21 +41,23 @@ class Limelight:
     def update(self, table):
         tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
         ty = radians(table.getFloat('ty', 1))
-        ta = table.getFloat('ty', 1)
+        ta = table.getFloat('ta', 1)
 
         self.marker = Marker()
         #marker.header.frame_id = "limelight"
-        self.marker.header.frame_id = "base_link"
+        self.marker.header.frame_id = "limelight"
         self.marker.header.stamp = rospy.Time.now()
         self.marker.ns = "target_heading"
         self.marker.id = 0
         self.marker.type = Marker.ARROW
-        self.marker.scale.x = 1.0
-        self.marker.scale.y = 1.0
-        self.marker.scale.z = 1.0
+        self.marker.scale.x = ta
+        self.marker.scale.y = 0.05
+        self.marker.scale.z = 0.05
         self.marker.pose.position.x = 0
         self.marker.pose.position.y = 0
         self.marker.pose.position.z = 0
+        self.marker.color.a = 1.0 # Don't forget the alpha!
+        self.marker.color.g = 1.0 # Green!
         orientation = transformations.quaternion_from_euler(tx, ty, 0)
         self.marker.pose.orientation.x = orientation[0]
         self.marker.pose.orientation.y = orientation[1]
