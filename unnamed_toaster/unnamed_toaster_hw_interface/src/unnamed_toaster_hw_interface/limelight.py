@@ -36,10 +36,13 @@ class Limelight:
 
     def __init__(self):
         rospy.init_node("limelight")
-    
-        self.pub = rospy.Publisher("limelight_marker", Marker)
+        self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1)
 
-    def update(self, tx, ta, ty):
+    def update(self, table):
+        tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
+        ty = radians(table.getFloat('ty', 1))
+        ta = table.getFloat('ty', 1)
+
         self.marker = Marker()
         #marker.header.frame_id = "limelight"
         self.marker.header.frame_id = "base_link"
@@ -53,9 +56,11 @@ class Limelight:
         self.marker.pose.position.x = 0
         self.marker.pose.position.y = 0
         self.marker.pose.position.z = 0
-        self.marker.pose.orientation = transformations.quaternion_from_euler(tx, ty, 0)
-        
-
+        orientation = transformations.quaternion_from_euler(tx, ty, 0)
+        self.marker.pose.orientation.x = orientation[0]
+        self.marker.pose.orientation.y = orientation[1]
+        self.marker.pose.orientation.z = orientation[2]
+        self.marker.pose.orientation.w = orientation[3]
 
     def publish(self):
         self.pub.publish(self.marker)

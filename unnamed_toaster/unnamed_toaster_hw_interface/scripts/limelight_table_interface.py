@@ -31,7 +31,6 @@
 
 import rospy
 from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesInterface
-#from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.limelight import Limelight
 
 class LimelightTableInterface:
@@ -40,25 +39,19 @@ class LimelightTableInterface:
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC") # Get the parameter for the IP (fallback to DNS (DNS does not work on the field!))
         self.rate = rospy.get_param("~rate", 50) # Get the paramater for the rate
         self.table = NetworkTablesInterface("limelight", ip) # Get the table limelight from the server at "ip"
-
-        #self.control = RobotControl(self.table)
-        # TODO: Turret control here based off robot control
         self.limelight = Limelight()
 
     def run(self):
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
-            tx = radians(float(self.table.getNumber('tx', '1'))) # Convert the float converting the double into 
-            ty = radians(float(self.table.getNumber('ty', '1')))
-            ta = float(self.table.getNumber('ty', '1'))
-            self.limelight.update(tx, ty, ta)
+            self.limelight.update(self.table)
             self.limelight.publish()
-            
+
             # Sleep
             rate.sleep()
 
 
 if __name__=="__main__":
     rospy.init_node("limelight")
-    table = ROSTableInterface()
+    table = LimelightTableInterface()
     table.run()
