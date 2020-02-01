@@ -72,11 +72,37 @@ class Limelight:
         self.arrow_marker.pose.orientation.z = orientation[2]
         self.arrow_marker.pose.orientation.w = orientation[3]
 
+        #TODO Account for the transform to the limelight, (transform finder function?)
         try:
           laser_data = self.laser_msg.ranges
-          self.arrow_marker.scale.x = laser_data[int(round(90 + degrees(tx)))]
+          distance_to_target = laser_data[int(round(90 + degrees(tx)))]
+          self.arrow_marker.scale.x = distance_to_target
           #print(int(round(90 + degrees(tx))))
           #print(laser_data[int(round(90 + tx))])
+
+          self.wall_marker = Marker()
+          self.wall_marker.header.frame_id = "laser"
+          self.wall_marker.header.stamp = rospy.Time.now()
+          self.wall_marker.ns = "wall_vis"
+          self.wall_marker.id = 0
+          self.wall_marker.type = Marker.LINE_STRIP
+
+          self.start_point = Point()
+          self.start_point.x = 0.2
+          self.start_point.y = 0.0
+          self.start_point.z = 0.2
+          self.endpoint = Point()
+          self.end_point.x = 0.7
+          self.end_point.y = 0
+          self.end_point.z = 0.2
+
+
+          self.wall_marker.action = 0
+          self.wall_marker.scale.x = 0.1
+          self.wall_marker.color.a = 1.0 # Don't forget the alpha!
+          self.wall_marker.color.g = 1.0 # Green!
+          self.wall_marker.points.append(self.start_point)
+          self.wall_marker.points.append(self.end_point)
         except AttributeError:
           pass
     
@@ -85,3 +111,7 @@ class Limelight:
 
     def publish(self):
         self.pub.publish(self.arrow_marker)
+        try:
+          self.pub.publish(self.wall_marker)
+        except AttributeError:
+          pass
