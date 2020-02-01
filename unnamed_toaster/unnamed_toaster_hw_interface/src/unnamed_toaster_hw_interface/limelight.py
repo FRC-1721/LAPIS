@@ -58,7 +58,8 @@ class Limelight:
         self.marker.pose.position.z = 0
         self.marker.color.a = 1.0 # Don't forget the alpha!
         self.marker.color.g = 1.0 # Green!
-        orientation = transformations.quaternion_from_euler(tx, ty, 0)
+        #print(str(tx) + str(ty))
+        orientation = transformations.quaternion_from_euler(0, ty * -1, tx * -1)
         self.marker.pose.orientation.x = orientation[0]
         self.marker.pose.orientation.y = orientation[1]
         self.marker.pose.orientation.z = orientation[2]
