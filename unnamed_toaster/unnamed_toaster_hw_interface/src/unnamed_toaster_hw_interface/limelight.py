@@ -27,43 +27,61 @@
 
 import rospy
 
-from geometry_msgs.msg import Quaternion
-from math import radians
+from math import radians, degrees
 from tf import transformations
+
+from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Point, PoseStamped, PointStamped
+
+from sensor_msgs.msg import LaserScan
+
 from visualization_msgs.msg import Marker
+
 
 class Limelight:
 
     def __init__(self):
-        rospy.init_node("limelight")
-        self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1)
+        rospy.init_node("limelight") # Name this node Limelight
+        self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1) # Create a publisher for our marker data
+
+        # Subscriber data
+        sub = rospy.Subscriber('/scan', LaserScan, self.laser_callback)
+        self.laser_msg = None
 
     def update(self, table):
         tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
         ty = radians(table.getFloat('ty', 1))
         ta = table.getFloat('ta', 1)
 
-        self.marker = Marker()
-        #marker.header.frame_id = "limelight"
-        self.marker.header.frame_id = "limelight"
-        self.marker.header.stamp = rospy.Time.now()
-        self.marker.ns = "target_heading"
-        self.marker.id = 0
-        self.marker.type = Marker.ARROW
-        self.marker.scale.x = ta
-        self.marker.scale.y = 0.05
-        self.marker.scale.z = 0.05
-        self.marker.pose.position.x = 0
-        self.marker.pose.position.y = 0
-        self.marker.pose.position.z = 0
-        self.marker.color.a = 1.0 # Don't forget the alpha!
-        self.marker.color.g = 1.0 # Green!
-        #print(str(tx) + str(ty))
+        self.arrow_marker = Marker()
+        self.arrow_marker.header.frame_id = "limelight"
+        self.arrow_marker.header.stamp = rospy.Time.now()
+        self.arrow_marker.ns = "target_heading"
+        self.arrow_marker.id = 0
+        self.arrow_marker.type = Marker.ARROW
+        self.arrow_marker.scale.y = 0.05
+        self.arrow_marker.scale.z = 0.05
+        self.arrow_marker.pose.position.x = 0
+        self.arrow_marker.pose.position.y = 0
+        self.arrow_marker.pose.position.z = 0
+        self.arrow_marker.color.a = 1.0 # Don't forget the alpha!
+        self.arrow_marker.color.g = 1.0 # Green!
         orientation = transformations.quaternion_from_euler(0, ty * -1, tx * -1)
-        self.marker.pose.orientation.x = orientation[0]
-        self.marker.pose.orientation.y = orientation[1]
-        self.marker.pose.orientation.z = orientation[2]
-        self.marker.pose.orientation.w = orientation[3]
+        self.arrow_marker.pose.orientation.x = orientation[0]
+        self.arrow_marker.pose.orientation.y = orientation[1]
+        self.arrow_marker.pose.orientation.z = orientation[2]
+        self.arrow_marker.pose.orientation.w = orientation[3]
+
+        try:
+          laser_data = self.laser_msg.ranges
+          self.arrow_marker.scale.x = laser_data[int(round(90 + degrees(tx)))]
+          #print(int(round(90 + degrees(tx))))
+          #print(laser_data[int(round(90 + tx))])
+        except AttributeError:
+          pass
+    
+    def laser_callback(self, msg):
+        self.laser_msg = msg
 
     def publish(self):
-        self.pub.publish(self.marker)
+        self.pub.publish(self.arrow_marker)
