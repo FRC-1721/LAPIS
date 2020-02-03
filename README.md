@@ -1,13 +1,17 @@
 # LAPIS
 ![Image Owned by Mojang](https://gamepedia.cursecdn.com/minecraft_gamepedia/archive/9/9f/20190403173427%21Lapis_Lazuli.png?version=333534eee995063b4191a3abe9f86113)
 
+# Hungry Toaster
+![Image Owned by Travis aka boinary aka dirdraggo](https://cdn.discordapp.com/attachments/516760208366764038/647066532861575168/Hungry_Toaster.png)
+
 ## Installation Notes
 Using the rosinstall file, copy the rosinstall file into your catkin workspace
 ```
-curl https://raw.githubusercontent.com/FRC-1721/LAPIS/restructure-pkg/kinetic.rosinstall
+wget https://raw.githubusercontent.com/FRC-1721/LAPIS/master/kinetic.rosinstall
 ```
 Then run the update
 ```
+cp kinetic.rosinstall src/.rosinstall
 wstool update -t src
 ```
 
@@ -34,8 +38,17 @@ and set the ROS_MASTER_URI to the robot's computer IP address:
 	export ROS_IP=X.Y.Z.2
 	export ROS_MASTER_URI=http://X.Y.Z.1:11311
 
-# Testing
-Launch `fakeOdom` or `flakeOdom` first for testing, it will provide
-networktables data in place of the rio data and will simulate changing encoder
-values. The tidalforceodom node will generate /odom and when pointed toward
-127.0.0.1 it will read the fake data from the encoders
+# Running the Code
+
+To run everything on the real robot (laser drivers, odometry, URDF):
+
+	export ROS_IP=10.17.21.106
+	roslaunch hungry_toaster hungry_toaster.launch
+
+To simuate network tables for odometry:
+
+	rosrun tidalforce_odom simulated_rio.py
+
+To just view the URDF/meshes:
+
+	roslaunch hungry_toaster view_urdf.launch

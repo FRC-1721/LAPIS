@@ -1,0 +1,15 @@
+TrajectoryPlannerROS:
+  max_vel_x: 1.5 # Max velocity forward (in m/s)
+  min_vel_x: 0.8 # Min velocity (min value to overcome the friction in the motors)
+  max_vel_theta: 1.5 # Max rotation in rad/s
+  min_in_place_vel_theta: 1.0 # The min value to overcome friction in rad/s
+
+  acc_lim_theta: 0.5 # The max rotational limit of the robot in rad/s/s
+  acc_lim_x: 0.3 # The max acceleration of the robot in m/s/s
+  
+  latch_xy_goal_tolerance: true # If the robot reaches its target with this set to true, it will not attempt to retrack its target if its rotation takes it outside its target range
+  xy_goal_tolerance: 1 # The tolerance in meters for the xy goal
+  yaw_goal_tolerance: 1 # should be improved for better accuracy
+
+  holonomic_robot: false # Inital d d d
+  
