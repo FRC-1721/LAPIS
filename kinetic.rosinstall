@@ -6,4 +6,4 @@
 
 # drivers 
 #- git: {local-name: rplidar_ros/, uri: 'http://github.com/robopeak/rplidar_ros', version: master}
-#- git: {local-name: rplidar_ros/, uri: 'http://github.com/Slamtec/rplidar_ros', version: master}
+- git: {local-name: rplidar_ros/, uri: 'http://github.com/Slamtec/rplidar_ros', version: master}
