@@ -33,25 +33,27 @@ import rospy
 from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesInterface
 from unnamed_toaster_hw_interface.limelight import Limelight
 
-class LimelightTableInterface:
+class DefaultTableInterface:
 
     def __init__(self):
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC") # Get the parameter for the IP (fallback to DNS (DNS does not work on the field!))
         self.rate = rospy.get_param("~rate", 50) # Get the paramater for the rate
-        self.table = NetworkTablesInterface("limelight", ip) # Get the table limelight from the server at "ip"
+        self.limelight_table = NetworkTablesInterface("limelight", ip) # Get the table limelight from the server at "ip"
         self.limelight = Limelight()
 
     def run(self):
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
-            self.limelight.update(self.table)
+            self.limelight.update(self.limelight_table)
             self.limelight.publish()
+
+            # Put other logic and data here to run other attached scripts
 
             # Sleep
             rate.sleep()
 
 
 if __name__=="__main__":
-    rospy.init_node("limelight")
-    table = LimelightTableInterface()
+    rospy.init_node("default_table_node")
+    table = DefaultTableInterface()
     table.run()
