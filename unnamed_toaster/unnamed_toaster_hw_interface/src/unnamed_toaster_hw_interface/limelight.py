@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-
 """
-    Copyright (c) 2020 Concord Robotics Inc.
+    Copyright (c) 2019-2020 Concord Robotics Inc.
     All right reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,26 +26,41 @@
 """
 
 import rospy
-from std_msgs.msg import Int32
 
-def nt_publisher(): # TODO these need to be updated with real NT table values in the future!
-    # Create publisher topics
-    starboard_encoder = rospy.Publisher('starboard_encoder', Int32, queue_size=10)
-    port_encoder = rospy.Publisher('port_encoder', Int32, queue_size=10)
-    # Init node
-    rospy.init_node('nt_interface', anonymous=True)
-    rate = rospy.Rate(10) # In hz
+from geometry_msgs.msg import Quaternion
+from math import radians
+from tf import transformations
+from visualization_msgs.msg import Marker
 
-    while not rospy.is_shutdown():
-        nt_value_starboard_encoder = "0"
-        nt_value_port_encoder = "0"
-        rospy.loginfo("Got values from NT, current index is: " + str(0))
-        starboard_encoder.publish(nt_value_starboard_encoder)
-        port_encoder.publish(nt_value_port_encoder)
-        rate.sleep()
+class Limelight:
 
-if __name__ == '__main__':
-    try:
-        nt_publisher()
-    except rospy.ROSInterruptException:
-        pass # Helps when exiting using Ctrl + C 
+    def __init__(self):
+        rospy.init_node("limelight")
+        self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1)
+
+    def update(self, table):
+        tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
+        ty = radians(table.getFloat('ty', 1))
+        ta = table.getFloat('ty', 1)
+
+        self.marker = Marker()
+        #marker.header.frame_id = "limelight"
+        self.marker.header.frame_id = "base_link"
+        self.marker.header.stamp = rospy.Time.now()
+        self.marker.ns = "target_heading"
+        self.marker.id = 0
+        self.marker.type = Marker.ARROW
+        self.marker.scale.x = 1.0
+        self.marker.scale.y = 1.0
+        self.marker.scale.z = 1.0
+        self.marker.pose.position.x = 0
+        self.marker.pose.position.y = 0
+        self.marker.pose.position.z = 0
+        orientation = transformations.quaternion_from_euler(tx, ty, 0)
+        self.marker.pose.orientation.x = orientation[0]
+        self.marker.pose.orientation.y = orientation[1]
+        self.marker.pose.orientation.z = orientation[2]
+        self.marker.pose.orientation.w = orientation[3]
+
+    def publish(self):
+        self.pub.publish(self.marker)

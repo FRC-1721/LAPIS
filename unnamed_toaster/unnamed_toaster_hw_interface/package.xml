@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>unnamed_toaster_odom</name>
+  <name>unnamed_toaster_hw_interface</name>
   <version>0.0.0</version>
-  <description>The unnamed_toaster_odom package</description>
+  <description>The unnamed_toaster_hw_interface package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
