@@ -28,8 +28,9 @@
 import numpy
 import rospy
 import tf2_ros
+import tf2_geometry_msgs
 
-from math import radians, degrees, tan, cos, sine, isinf
+from math import radians, degrees, tan, cos, sin, isinf
 from tf import transformations
 
 from geometry_msgs.msg import Quaternion
@@ -117,19 +118,31 @@ class Limelight:
             # TODO: check bounds on start_idx/end_idx
             start_idx = int((yaw - radians(5) - msg.angle_min) / msg.angle_increment)
             end_idx = int((yaw + radians(5) - msg.angle_min) / msg.angle_increment)
+            if start_idx < 0:
+                rospy.logwarn("Start index invalid")
+                return
+            if end_idx >= len(msg.ranges):
+                rospy.logwarn("End index invalid")
+                return
+            if start_idx >= end_idx:
+                rospy.logwarn("Indices are invalid")
+                return
             x = list()
             y = list()
-            i = start_idx:
+            i = start_idx
             while i < end_idx:
                 heading = msg.angle_min + (i * msg.angle_increment)
                 distance = msg.ranges[i]
+                i += 1
                 if isinf(distance):
                     continue
 
                 x.append(distance * cos(heading))
                 y.append(distance * sin(heading))
 
-                i += 1
+            if len(x) < 3:
+                rospy.logwarn("Not enough points")
+                return
 
             # Quick visualization
             distance = msg.ranges[(start_idx + end_idx) / 2]
@@ -140,7 +153,7 @@ class Limelight:
             x = numpy.array(x, dtype=numpy.float64)
             y = numpy.array(y, dtype=numpy.float64)
             A = numpy.vstack([x, numpy.ones(len(x))]).T
-            m1, c1 = numpy.linalg.lstsq(A, y, rcond=None)[0]
+            m1, c1 = numpy.linalg.lstsq(A, y)[0]
 
             # Convert heading a line equation (m2x + c2)
             m2 = tan(yaw)
@@ -151,7 +164,7 @@ class Limelight:
             yi = m1 * xi + c1
 
             ps = PointStamped()
-            ps.header = laser.header
+            ps.header = msg.header
             ps.point.x = xi
             ps.point.y = yi
             self.wall_point = ps
