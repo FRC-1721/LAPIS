@@ -25,9 +25,11 @@
     ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import numpy
 import rospy
+import tf2_ros
 
-from math import radians, degrees
+from math import radians, degrees, tan, cos, sine, isinf
 from tf import transformations
 
 from geometry_msgs.msg import Quaternion
@@ -41,14 +43,24 @@ from visualization_msgs.msg import Marker
 class Limelight:
 
     def __init__(self):
-        rospy.init_node("limelight") # Name this node Limelight
         self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1) # Create a publisher for our marker data
-        self.closestP=rospy.Publisher("/closest_point", PointStamped, queue_size=1)
+        self.closest_pt_pub = rospy.Publisher("closest_point", PointStamped, queue_size=1)
+
+        self.frame_id = rospy.get_param("~frame_id", "limelight")
+
+        # Setup TF2
+        # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
+
+        # Initialize things
+        self.arrow_marker = None
+        self.wall_point = None
+        self.limelight_to_laser_transform = None
 
         # Lasercallback data
         sub = rospy.Subscriber('/scan', LaserScan, self.laser_callback)
         self.laser_msg = None
-        self.get_transform() # Set the current laser transform
 
     def update(self, table):
         tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
@@ -56,7 +68,7 @@ class Limelight:
         ta = table.getFloat('ta', 1)
 
         self.arrow_marker = Marker()
-        self.arrow_marker.header.frame_id = "limelight"
+        self.arrow_marker.header.frame_id = self.frame_id
         self.arrow_marker.header.stamp = rospy.Time.now()
         self.arrow_marker.ns = "target_heading"
         self.arrow_marker.id = 0
@@ -74,45 +86,89 @@ class Limelight:
         self.arrow_marker.pose.orientation.z = orientation[2]
         self.arrow_marker.pose.orientation.w = orientation[3]
 
-        #TODO Account for the transform to the limelight, (transform finder function?)
-        try:
-          target_laser_heading = int(round(90 + degrees(tx))) # Find witch laser scan is the correct one (90 should be updated to be dynamic perhaps? (get transform?))
-          distance_to_target = self.laser_msg.ranges[target_laser_heading] # get the range of that laser, this tells us the distance to the wall directly beneath the croshairs of the Limelight
-          self.arrow_marker.scale.x = distance_to_target # Set the arrow to that length
-          #print(int(round(90 + degrees(tx))))
-          #print(laser_data[int(round(90 + tx))])
+        if self.limelight_to_laser_transform:
 
-          point = Point()
-          x=laser[i]*cos(target_laser_heading)
-          point.x=x
-          point.y=distance_to_target*sin(target_laser_heading)
-          pose = PoseStamped()
-          pose.header = self.laser_msg.header
-          point.z = 0.0
-          pose.pose.position = point
-          pose_transformed = tf2_geometry_msgs.do_transform_pose(pose, self.limelight_to_laser_transform)
-          point_transformed = PointStamped()
+            # Cache the values so nothing changes
+            msg = self.laser_msg
+            transform = self.limelight_to_laser_transform
 
-          point_transformed.header=pose_transformed.header
-          point_transformed.point = pose_transformed.pose.position
-          self.closestP.publish(point_transformed)
-        except AttributeError:
-          pass
-    
+            # Transform a pose at the limelight
+            heading = PoseStamped()
+            heading.header.frame_id = self.frame_id
+            heading.header.stamp = msg.header.stamp
+            heading.pose.position.x = 0.0
+            heading.pose.position.y = 0.0
+            heading.pose.position.z = 0.0
+            heading.pose.orientation.x = orientation[0]
+            heading.pose.orientation.y = orientation[1]
+            heading.pose.orientation.z = orientation[2]
+            heading.pose.orientation.w = orientation[3]
+
+            heading_transformed = tf2_geometry_msgs.do_transform_pose(heading, transform)
+
+            # Get heading angle in laser frame
+            quaternion = [heading_transformed.pose.orientation.x, \
+                          heading_transformed.pose.orientation.y, \
+                          heading_transformed.pose.orientation.z, \
+                          heading_transformed.pose.orientation.w]
+            _, _, yaw = transformations.euler_from_quaternion(quaternion)
+
+            # Transform points around heading
+            # TODO: check bounds on start_idx/end_idx
+            start_idx = int((yaw - radians(5) - msg.angle_min) / msg.angle_increment)
+            end_idx = int((yaw + radians(5) - msg.angle_min) / msg.angle_increment)
+            x = list()
+            y = list()
+            i = start_idx:
+            while i < end_idx:
+                heading = msg.angle_min + (i * msg.angle_increment)
+                distance = msg.ranges[i]
+                if isinf(distance):
+                    continue
+
+                x.append(distance * cos(heading))
+                y.append(distance * sin(heading))
+
+                i += 1
+
+            # Quick visualization
+            distance = msg.ranges[(start_idx + end_idx) / 2]
+            self.arrow_marker.scale.x = distance
+
+            # Find a line best fit to points
+            # https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
+            x = numpy.array(x, dtype=numpy.float64)
+            y = numpy.array(y, dtype=numpy.float64)
+            A = numpy.vstack([x, numpy.ones(len(x))]).T
+            m1, c1 = numpy.linalg.lstsq(A, y, rcond=None)[0]
+
+            # Convert heading a line equation (m2x + c2)
+            m2 = tan(yaw)
+            c2 = heading_transformed.pose.position.y - (heading_transformed.pose.position.x * m2)
+
+            # Find intersection between line (m1x + c1) and ray eminating fom heading_transformed (m2x + c2)
+            xi = (c2 - c1) / (m2 - m1)
+            yi = m1 * xi + c1
+
+            ps = PointStamped()
+            ps.header = laser.header
+            ps.point.x = xi
+            ps.point.y = yi
+            self.wall_point = ps
+
     def laser_callback(self, msg):
         self.laser_msg = msg # save the msg data
         self.get_transform() # Update the transform to the laser at the time the laser scan was collected
 
     def get_transform(self):
         try:
-            self.limelight_to_laser_transform = self.tf_buffer.lookup_transform("limelight", "laser", rospy.Time(0), rospy.Duration(1.0))
+            # TODO if we start moving really fast, might need to use timestamp from message
+            self.limelight_to_laser_transform = self.tf_buffer.lookup_transform(self.frame_id, "laser", rospy.Time(0), rospy.Duration(1.0))
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rospy.logerror("Error getting transform")
-            print "Error"
 
     def publish(self):
-        self.pub.publish(self.arrow_marker)
-        try:
-          self.pub.publish(self.wall_marker)
-        except AttributeError:
-          pass
+        if self.arrow_marker:
+            self.pub.publish(self.arrow_marker)
+        if self.wall_point:
+            self.closest_pt_pub.publish(self.wall_point)
