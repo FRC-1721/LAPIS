@@ -83,5 +83,6 @@ class AIM():
         #print(ball1memX)
         p = p + 1
         i = i + 1
-        table.putNumber("ball1centerX", ball1memX)
-        table.putNumber("ball2centerX", ball2memX)
+
+    def publish(self, table):
+        # Publish the stuff here

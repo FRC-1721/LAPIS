@@ -55,7 +55,7 @@ class DefaultTableInterface:
             self.limelight.publish()
 
             self.aim.update(self.ml_table)
-            self.aim.publish()
+            self.aim.publish(self.ml_table)
             # Put other logic and data here to run other attached scripts
 
             # Sleep
