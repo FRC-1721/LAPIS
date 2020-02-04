@@ -12,6 +12,8 @@ class AIM():
         ball2memX = 0
         tempmem1 = 0
         tempmem2 = 0
+
+        self.turnSpeed = 0.5
     
     def update(self, table):
         notEnoughBallage = False
@@ -85,4 +87,35 @@ class AIM():
         i = i + 1
 
     def publish(self, table):
-        # Publish the stuff here
+        #values for tweaking
+        
+        #math & code
+        while 1:
+            b1cx = Make_TTB_Work.get_b1cx()
+            
+            leftSpeed = 0
+            rightSpeed = 0
+            if (b1cx >=27 and b1cx <= 31):
+                leftSpeed = 0
+                rightSpeed = 0
+            elif(b1cx < 27 and b1cx != 0):
+                leftSpeed = self.turnSpeed
+            elif(b1cx > 31):
+                rightSpeed = self.turnSpeed
+            else:
+                leftSpeed = 0
+                rightSpeed = 0
+        
+                
+            print("LS: " + str(leftSpeed))
+            print("RS: " + str(rightSpeed))
+            
+            #test = rostable.getNumber("coprocessorPort", 45)
+            
+            #print(rightSpeed)
+            #print(leftSpeed)
+            print("B1CX: " + str(b1cx))
+            #print(test)
+        
+
+
