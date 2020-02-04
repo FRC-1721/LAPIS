@@ -76,7 +76,7 @@ class Limelight:
 
         #TODO Account for the transform to the limelight, (transform finder function?)
         try:
-          target_laser_heading = int(round(90 + degrees(tx))) # Find witch laser scan is the correct one (90 should be updated to be dynamic perhaps?)
+          target_laser_heading = int(round(90 + degrees(tx))) # Find witch laser scan is the correct one (90 should be updated to be dynamic perhaps? (get transform?))
           distance_to_target = self.laser_msg.ranges[target_laser_heading] # get the range of that laser, this tells us the distance to the wall directly beneath the croshairs of the Limelight
           self.arrow_marker.scale.x = distance_to_target # Set the arrow to that length
           #print(int(round(90 + degrees(tx))))
