@@ -44,7 +44,7 @@ class Limelight:
         rospy.init_node("limelight") # Name this node Limelight
         self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1) # Create a publisher for our marker data
         self.closestP=rospy.Publisher("/closest_point", PointStamped, queue_size=1)
-        
+
         # Lasercallback data
         sub = rospy.Subscriber('/scan', LaserScan, self.laser_callback)
         self.laser_msg = None
@@ -83,6 +83,9 @@ class Limelight:
           #print(laser_data[int(round(90 + tx))])
 
           point = Point()
+          x=laser[i]*cos(target_laser_heading)
+          point.x=x
+          point.y=distance_to_target*sin(target_laser_heading)
           pose = PoseStamped()
           pose.header = self.laser_msg.header
           point.z = 0.0
