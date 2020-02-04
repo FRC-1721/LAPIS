@@ -43,10 +43,12 @@ class Limelight:
     def __init__(self):
         rospy.init_node("limelight") # Name this node Limelight
         self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1) # Create a publisher for our marker data
-
-        # Subscriber data
+        self.closestP=rospy.Publisher("/closest_point", PointStamped, queue_size=1)
+        
+        # Lasercallback data
         sub = rospy.Subscriber('/scan', LaserScan, self.laser_callback)
         self.laser_msg = None
+        self.get_transform() # Set the current laser transform
 
     def update(self, table):
         tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
@@ -74,40 +76,36 @@ class Limelight:
 
         #TODO Account for the transform to the limelight, (transform finder function?)
         try:
-          laser_data = self.laser_msg.ranges
-          distance_to_target = laser_data[int(round(90 + degrees(tx)))]
-          self.arrow_marker.scale.x = distance_to_target
+          target_laser_heading = int(round(90 + degrees(tx))) # Find witch laser scan is the correct one (90 should be updated to be dynamic perhaps?)
+          distance_to_target = self.laser_msg.ranges[target_laser_heading] # get the range of that laser, this tells us the distance to the wall directly beneath the croshairs of the Limelight
+          self.arrow_marker.scale.x = distance_to_target # Set the arrow to that length
           #print(int(round(90 + degrees(tx))))
           #print(laser_data[int(round(90 + tx))])
 
-          self.wall_marker = Marker()
-          self.wall_marker.header.frame_id = "laser"
-          self.wall_marker.header.stamp = rospy.Time.now()
-          self.wall_marker.ns = "wall_vis"
-          self.wall_marker.id = 0
-          self.wall_marker.type = Marker.LINE_STRIP
+          point = Point()
+          pose = PoseStamped()
+          pose.header = self.laser_msg.header
+          point.z = 0.0
+          pose.pose.position = point
+          pose_transformed = tf2_geometry_msgs.do_transform_pose(pose, self.limelight_to_laser_transform)
+          point_transformed = PointStamped()
 
-          self.start_point = Point()
-          self.start_point.x = 0.2
-          self.start_point.y = 0.0
-          self.start_point.z = 0.2
-          self.endpoint = Point()
-          self.end_point.x = 0.7
-          self.end_point.y = 0
-          self.end_point.z = 0.2
-
-
-          self.wall_marker.action = 0
-          self.wall_marker.scale.x = 0.1
-          self.wall_marker.color.a = 1.0 # Don't forget the alpha!
-          self.wall_marker.color.g = 1.0 # Green!
-          self.wall_marker.points.append(self.start_point)
-          self.wall_marker.points.append(self.end_point)
+          point_transformed.header=pose_transformed.header
+          point_transformed.point = pose_transformed.pose.position
+          self.closestP.publish(point_transformed)
         except AttributeError:
           pass
     
     def laser_callback(self, msg):
-        self.laser_msg = msg
+        self.laser_msg = msg # save the msg data
+        self.get_transform() # Update the transform to the laser at the time the laser scan was collected
+
+    def get_transform(self):
+        try:
+            self.limelight_to_laser_transform = self.tf_buffer.lookup_transform("limelight", "laser", rospy.Time(0), rospy.Duration(1.0))
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+            rospy.logerror("Error getting transform")
+            print "Error"
 
     def publish(self):
         self.pub.publish(self.arrow_marker)
