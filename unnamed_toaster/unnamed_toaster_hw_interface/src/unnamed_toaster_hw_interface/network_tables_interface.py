@@ -28,11 +28,12 @@
 import rospy
 from networktables import NetworkTables
 
+
 class NetworkTablesInterface:
 
     def __init__(self, name, ip, port=None, rate=0.01):
         rospy.loginfo("Connnecting to " + name + " on " + ip)
-        NetworkTables.initialize(server = ip)
+        NetworkTables.initialize(server=ip)
         if port:
             NetworkTables.setServer([(ip, 5800), ])
         self.table = NetworkTables.getTable(name)

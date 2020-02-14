@@ -33,7 +33,9 @@ from geometry_msgs.msg import Quaternion, Twist
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
 
-## Based off vanadiumlabs/arbotix_ros::DiffController
+# Based off vanadiumlabs/arbotix_ros::DiffController
+
+
 class RobotOdom:
 
     def __init__(self):
@@ -92,8 +94,10 @@ class RobotOdom:
         if (th != 0):
             self.th = self.th + th
 
-        self.twist.linear.x = ((1 - self.smoothing) * self.twist.linear.x) + (self.smoothing * self.dx)
-        self.twist.angular.z = ((1 - self.smoothing) * self.twist.angular.z) + (self.smoothing * self.dr)
+        self.twist.linear.x = ((1 - self.smoothing) *
+                               self.twist.linear.x) + (self.smoothing * self.dx)
+        self.twist.angular.z = (
+            (1 - self.smoothing) * self.twist.angular.z) + (self.smoothing * self.dr)
 
     def publish(self):
         # publish or perish
@@ -109,7 +113,7 @@ class RobotOdom:
             rospy.Time.now(),
             self.base_frame_id,
             self.odom_frame_id
-            )
+        )
 
         odom = Odometry()
         odom.header.stamp = now

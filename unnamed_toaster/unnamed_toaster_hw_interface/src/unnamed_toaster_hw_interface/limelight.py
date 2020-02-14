@@ -32,6 +32,7 @@ from math import radians
 from tf import transformations
 from visualization_msgs.msg import Marker
 
+
 class Limelight:
 
     def __init__(self):
@@ -39,7 +40,8 @@ class Limelight:
         self.pub = rospy.Publisher("limelight_marker", Marker, queue_size=1)
 
     def update(self, table):
-        tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
+        # Convert the float converting the double into
+        tx = radians(table.getFloat('tx', 1))
         ty = radians(table.getFloat('ty', 1))
         ta = table.getFloat('ty', 1)
 

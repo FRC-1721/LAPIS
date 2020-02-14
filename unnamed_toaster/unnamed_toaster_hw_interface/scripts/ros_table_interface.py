@@ -34,6 +34,7 @@ from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesI
 from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
 
+
 class ROSTableInterface:
 
     def __init__(self):
@@ -64,7 +65,7 @@ class ROSTableInterface:
             rate.sleep()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     rospy.init_node("ros_table_node")
     table = ROSTableInterface()
     table.run()
