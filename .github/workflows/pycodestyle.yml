@@ -1,4 +1,4 @@
-name: Oy Code Style
+name: Python Style Checker
 on: [push]
 
 jobs:
