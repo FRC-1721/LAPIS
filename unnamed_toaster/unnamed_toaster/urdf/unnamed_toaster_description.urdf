@@ -12,7 +12,7 @@
     <visual>
       <origin rpy="0 0 1.57" xyz="0.2 0 0.15"/>
       <geometry>
-        <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_meters.stl"/>
+        <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_frame.stl"/>
       </geometry>
     </visual>
   </link>
