@@ -12,7 +12,7 @@
     <visual>
       <origin rpy="0 0 1.57" xyz="0.2 0 0.15"/>
       <geometry>
-        <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_meters.dae"/>
+        <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_meters.stl"/>
       </geometry>
     </visual>
   </link>
@@ -45,7 +45,7 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.3" radius="0.55"/>
+        <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_turret.stl"/>
       </geometry>
 	  <material name="grey"/>
     </visual>
