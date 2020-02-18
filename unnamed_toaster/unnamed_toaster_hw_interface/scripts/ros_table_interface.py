@@ -33,6 +33,7 @@ import rospy
 from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesInterface
 from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
+from unnamed_toaster_hw_interface.turret import Turret
 
 class ROSTableInterface:
 
@@ -41,7 +42,7 @@ class ROSTableInterface:
         self.table = NetworkTablesInterface("ROS", ip, 5800)
 
         self.control = RobotControl(self.table)
-        # TODO: Turret control here based off robot control
+        self.turret = Turret(self.table)
         self.odom = RobotOdom()
 
     def run(self):
@@ -58,8 +59,10 @@ class ROSTableInterface:
             self.odom.publish()
             previous_index = index
 
-            # TODO: add other reads here
 
+            self.turret.update()
+            self.turret.publish()
+        
             # Sleep
             rate.sleep()
 
