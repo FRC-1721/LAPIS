@@ -1,0 +1,9 @@
+name: Python Style Checker
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Python Style Checker
+      uses: andymckay/pycodestyle-action@0.1.3
