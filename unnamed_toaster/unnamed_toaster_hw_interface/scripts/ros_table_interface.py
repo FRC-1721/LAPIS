@@ -35,12 +35,18 @@ from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
 from unnamed_toaster_hw_interface.turret import Turret
 
+from unnamed_toaster_hw_interface.robot_command import RobotCommand
+
 class ROSTableInterface:
 
     def __init__(self):
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
         self.table = NetworkTablesInterface("ROS", ip, 5800)
 
+        # Commands
+        self.zero_turret = RobotCommand("zeroTurret", self.table)
+
+        # Systems
         self.control = RobotControl(self.table)
         self.turret = Turret(self.table)
         self.odom = RobotOdom()
