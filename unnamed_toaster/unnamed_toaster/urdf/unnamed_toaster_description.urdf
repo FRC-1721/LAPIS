@@ -1,16 +1,16 @@
 <robot name="unnamed">
 
   <material name="green">
-	<color rgba="0 1 0 1"/>
+  <color rgba="0 1 0 1"/>
   </material>
 
   <material name="grey">
-	<color rgba="0.1 0.1 0.1 1"/>
+  <color rgba="0.1 0.1 0.1 1"/>
   </material>
 
   <link name="base_link">
     <visual>
-      <origin rpy="0 0 1.57" xyz="0.2 0 0.15"/>
+      <origin rpy="0 0 1.57" xyz="0 0 0.0508"/>
       <geometry>
         <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_frame.stl"/>
       </geometry>
@@ -20,7 +20,7 @@
   <joint name="base_link_to_laser" type="fixed">
     <parent link="base_link"/>
     <child link="laser"/>
-    <origin xyz="-0.3048 -0.254 0.6096" rpy="0 0 1.57"/>
+    <origin xyz="-0.193675 0.09525 0.2" rpy="0 0 1.57"/>
   </joint>
 
   <link name="laser">
@@ -29,32 +29,32 @@
       <geometry>
         <cylinder length="0.1016" radius="0.0508"/>
       </geometry>
-	  <material name="grey"/>
+    <material name="grey"/>
     </visual>
   </link>
   
-  <joint name="base_link_to_turret" type="revolute">
+  <joint name="turret_joint" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort="1000.0" lower="-6.0" upper="6.0" velocity="0.5"/>
     <parent link="base_link"/>
     <child link="turret"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <origin xyz="-0.0922782 0.0 0.263525" rpy="0.0 0.0 0.0"/>
   </joint>
 
   <link name="turret">
     <visual>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 1.57"/>
       <geometry>
         <mesh filename="package://unnamed_toaster/meshes/unnamed_toaster_turret.stl"/>
       </geometry>
-	  <material name="grey"/>
+    <material name="grey"/>
     </visual>
   </link>
 
   <joint name="turret_to_limelight" type="fixed">
     <parent link="turret"/>
     <child link="limelight"/>
-    <origin rpy="0 -0.1 0" xyz="0.5 -0.3 0.1"/>
+    <origin xyz="0.0 0.2428875 0.4318" rpy="0.0 0.0 0.0"/>
   </joint>
 
   <link name="limelight">
@@ -63,7 +63,7 @@
       <geometry>
         <box size="0.0254 0.09779 0.05715 "/>
       </geometry>
-	  <material name="green"/>
+      <material name="green"/>
     </visual>
   </link>
 </robot>
