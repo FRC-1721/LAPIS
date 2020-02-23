@@ -32,19 +32,16 @@
 class RobotCommand:
 
     def __init__(self, command_name, table):
-        if (table.containsSubTable(command_name)): # If the table contains the command already
-            self.command_table = table.getSubtable(command_name) # Connect it
-        else: # Else
-            self.command_table = table.getSubtable(command_name) # Create it
-    
+        self.command_table = table.table.getSubTable(command_name) # Connect it
+
     def start(self): # Starts the command running
-        if not(self.command_table.getBoolean("running", True)):
-            self.command_table.putBoolean("running", True)
+        #if not(self.command_table.getBoolean("running", True)):
+        self.command_table.putBoolean("running", True)
 
     def stop(self):
-        if not(self.command_table.getBoolean("running", False)):
-            self.command_table.putBoolean("running", False)
-    
+        #if not(self.command_table.getBoolean("running", False)):
+        self.command_table.putBoolean("running", False)
+
     def run_till_done(self): # Big danger
         self.command_table.putBoolean("running", True)
         while (self.command_table.getBoolean("running", True)):

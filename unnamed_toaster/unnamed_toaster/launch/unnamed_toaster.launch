@@ -6,9 +6,6 @@
   <!-- robot state publisher -->
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" />
 
-  <!-- TODO: replace with alternate state publisher -->
-  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"/>
-
   <!-- laser -->
   <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen">
     <param name="serial_port" type="string" value="/dev/ttyUSB0"/>

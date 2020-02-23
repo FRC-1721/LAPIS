@@ -30,28 +30,34 @@ import rospy
 from math import pi
 
 from sensor_msgs.msg import JointState
+from std_srvs.srv import Empty, EmptyResponse
 
+from unnamed_toaster_hw_interface.robot_command import RobotCommand
 
 class Turret:
 
     def __init__(self, table):
         self.table = table
         self.pub = rospy.Publisher("joint_states", JointState, queue_size=1) # Joint state publisher
-        # TODO Add subscriber for turret command 
+        # TODO Add subscriber for turret command
 
         # Initialize things
+        self.raw_angle = 500
         self.turret_angle = 0.0
         self.offset_ticks = -6663.0         # Calibrated 2/18/2020
         self.ticks_per_rotation = 60468.0   # Calibrated 2/18/2020
 
+        self.zero_turret = RobotCommand("zeroTurret", self.table)
+        self.zero_service = rospy.Service("zero_turret", Empty, self.zeroCallback)
+
 
     def update(self):
-        angle = self.table.getFloat('Turret', 500) # Get the raw turret angle
+        self.raw_angle = self.table.getFloat('Turret', 500) # Get the raw turret angle
 
-        if angle > 0: # Bounce if not legal 
+        if self.raw_angle > 0: # Bounce if not legal
             return
 
-        self.turret_angle = ((self.offset_ticks - angle) / self.ticks_per_rotation) * (2 * pi)
+        self.turret_angle = ((self.offset_ticks - self.raw_angle) / self.ticks_per_rotation) * (2 * pi)
 
 
     def publish(self):
@@ -60,3 +66,26 @@ class Turret:
         msg.header.stamp = rospy.Time.now()
         msg.name.append("turret_joint")
         msg.position.append(self.turret_angle)
+
+        self.pub.publish(msg)
+
+
+    def zeroCallback(self, req):
+        self.zero_turret.start()
+
+        start = rospy.Time.now()
+        cycles_zeroed = 0
+        while True:
+            if abs(self.raw_angle) < 200:
+                cycles_zeroed += 1
+            if abs(self.turret_angle) < 0.1:
+                cycles_zeroed += 1
+            if cycles_zeroed > 100:
+                break
+            if rospy.Time.now() - start > rospy.Duration(5.0):
+                break
+            rospy.sleep(0.05)
+        self.zero_turret.stop()
+
+        return EmptyResponse()
+
