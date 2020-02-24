@@ -29,46 +29,26 @@
     POSSIBILITY OF SUCH DAMAGE.
 """
 
-import rospy
-from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesInterface
-from unnamed_toaster_hw_interface.robot_control import RobotControl
-from unnamed_toaster_hw_interface.robot_odom import RobotOdom
-from unnamed_toaster_hw_interface.turret import Turret
+class RobotCommand:
 
-class ROSTableInterface:
+    def __init__(self, command_name, table):
+        self.command_table = table.table.getSubTable(command_name) # Connect it
 
-    def __init__(self):
-        ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
-        self.table = NetworkTablesInterface("ROS", ip, 5800)
+    def start(self): # Starts the command running
+        #if not(self.command_table.getBoolean("running", True)):
+        self.command_table.putBoolean("running", True)
 
-        # Systems
-        self.control = RobotControl(self.table)
-        self.turret = Turret(self.table)
-        self.odom = RobotOdom()
+    def stop(self):
+        #if not(self.command_table.getBoolean("running", False)):
+        self.command_table.putBoolean("running", False)
 
-    def run(self):
-        rate = rospy.Rate(50)
-        previous_odom_index = 0
-        while not rospy.is_shutdown():
-            # Odom Get info
-            left = self.table.getFloat('Port', 0)
-            right = self.table.getFloat('Starboard', 0)
-            index = self.table.getInt('rosIndex', 0)
-            # Logic for odom sawtooth control
-            if index != previous_odom_index:
-                self.odom.update(left, right)
-            self.odom.publish()
-            previous_index = index
+    def run_till_done(self): # Big danger
+        self.command_table.putBoolean("running", True)
+        while (self.command_table.getBoolean("running", True)):
+            pass
 
+    def toggle(self):
+        self.command_table.putBoolean("running", not self.command_table.getBoolean("running", True))
 
-            self.turret.update()
-            self.turret.publish()
-
-            # Sleep
-            rate.sleep()
-
-
-if __name__=="__main__":
-    rospy.init_node("ros_table_node")
-    table = ROSTableInterface()
-    table.run()
+    def check(self):
+        return (self.command_table.getBoolean("running", False))

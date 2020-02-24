@@ -178,7 +178,7 @@ class Limelight:
             # TODO if we start moving really fast, might need to use timestamp from message
             self.limelight_to_laser_transform = self.tf_buffer.lookup_transform(self.frame_id, "laser", rospy.Time(0), rospy.Duration(1.0))
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-            rospy.logerror("Error getting transform")
+            rospy.logerr("Error getting transform")
 
     def publish(self):
         if self.arrow_marker:
