@@ -56,7 +56,6 @@ class RobotControl:
         thro = clamp(thro, self.max_speed * -1, self.max_speed)
         steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
 
-        self.table.putNumber("coprocessorPort", thro +
-                             steerage)  # Set port wheels in m/s
+        self.table.putNumber("coprocessorPort", thro + steerage)  # Set port wheels in m/s
         # Set starboard wheels in m/s
         self.table.putNumber("coprocessorStarboard", thro - steerage)
