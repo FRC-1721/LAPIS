@@ -30,6 +30,7 @@ import rospy
 from math import pi
 
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64
 from std_srvs.srv import Empty, EmptyResponse
 
 from unnamed_toaster_hw_interface.robot_command import RobotCommand
@@ -39,6 +40,7 @@ class Turret:
     def __init__(self, table):
         self.table = table
         self.pub = rospy.Publisher("joint_states", JointState, queue_size=1) # Joint state publisher
+        self.sub = rospy.Subscriber("turret_command", Float64, self.commandCallback)
         # TODO Add subscriber for turret command
 
         # Initialize things
@@ -46,9 +48,26 @@ class Turret:
         self.turret_angle = 0.0
         self.offset_ticks = -6663.0         # Calibrated 2/18/2020
         self.ticks_per_rotation = 60468.0   # Calibrated 2/18/2020
+        self.ticks_per_radians = 9550.0     # Calibrated 2/19/2020
 
-        self.zero_turret = RobotCommand("zeroTurret", self.table)
+        self.zero_turret = RobotCommand("zero_turret", self.table)
         self.zero_service = rospy.Service("zero_turret", Empty, self.zeroCallback)
+        self.enable_turret = RobotCommand("enable_shooter", self.table)
+
+
+    def commandCallback(self, msg):
+        # Enable control of turret
+        self.enable_turret.start()
+
+        # Convert the turret angle from radians to ticks
+        command = -msg.data * self.ticks_per_radians + self.offset_ticks
+        if command < -self.ticks_per_rotation:
+            command = -self.ticks_per_rotation
+        elif command > 0:
+            command = 0
+
+        # Set the turret angle (in ticks)
+        self.table.putNumber("coprocessorTurret", command)
 
 
     def update(self):
@@ -57,7 +76,8 @@ class Turret:
         if self.raw_angle > 0: # Bounce if not legal
             return
 
-        self.turret_angle = ((self.offset_ticks - self.raw_angle) / self.ticks_per_rotation) * (2 * pi)
+
+        self.turret_angle = (self.offset_ticks - self.raw_angle) / self.ticks_per_radians
 
 
     def publish(self):

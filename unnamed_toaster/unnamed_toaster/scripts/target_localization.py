@@ -46,8 +46,9 @@ from visualization_msgs.msg import Marker, MarkerArray
 class TargetLocalization:
 
     def __init__(self):
+        self.target_pub = rospy.Publisher("target_point", PointStamped, queue_size=1)
         self.arrow_pub = rospy.Publisher("limelight_ray", Marker, queue_size=1)
-        self.wall_points_pub = rospy.Publisher("wall_points", MarkerArray, queue_size=1)
+        self.points_pub = rospy.Publisher("wall_points", MarkerArray, queue_size=1)
 
         # Setup TF2
         # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
@@ -63,6 +64,8 @@ class TargetLocalization:
 
 
     def limelight_callback(self, msg):
+        start_time = rospy.get_time()
+
         # We need laser data
         if self.laser_msg:
             laser_msg = self.laser_msg
@@ -99,7 +102,7 @@ class TargetLocalization:
         # Get transformation between laser and limelight
         try:
             # TODO if we start moving really fast, might need to use timestamp from message
-            transform = self.tf_buffer.lookup_transform(msg.header.frame_id, laser_msg.header.frame_id, rospy.Time(0), rospy.Duration(1.0))
+            transform = self.tf_buffer.lookup_transform(msg.header.frame_id, laser_msg.header.frame_id, laser_msg.header.stamp, rospy.Duration(1.0))
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rospy.logerr("Error getting transform")
             return
@@ -124,12 +127,10 @@ class TargetLocalization:
                       heading_transformed.pose.orientation.z, \
                       heading_transformed.pose.orientation.w]
         _, _, yaw = transformations.euler_from_quaternion(quaternion)
-        rospy.loginfo("yaw: %f", yaw)
 
-        # Transform points around heading
-        start_idx = int((yaw - radians(10) - laser_msg.angle_min) / laser_msg.angle_increment)
-        end_idx = int((yaw + radians(10) - laser_msg.angle_min) / laser_msg.angle_increment)
-        rospy.loginfo("%d %d", start_idx, end_idx)
+        # Generate a set of scan points around the heading
+        start_idx = int((yaw - radians(20) - laser_msg.angle_min) / laser_msg.angle_increment)
+        end_idx = int((yaw + radians(20) - laser_msg.angle_min) / laser_msg.angle_increment)
         if start_idx < 0:
             rospy.logwarn("Start index invalid %d", start_idx)
             return
@@ -139,8 +140,8 @@ class TargetLocalization:
         if start_idx >= end_idx:
             rospy.logwarn("Indices are invalid")
             return
-        x = list()
-        y = list()
+        scan_x = list()
+        scan_y = list()
         i = start_idx
         avg_distance = 0
         while i < end_idx:
@@ -150,18 +151,57 @@ class TargetLocalization:
             if isinf(distance):
                 continue
 
-            x.append(distance * cos(heading))
-            y.append(distance * sin(heading))
             avg_distance += distance
+            scan_x.append(distance * cos(heading))
+            scan_y.append(distance * sin(heading))
 
-        if len(x) < 3:
-            rospy.logwarn("Not enough points to find best fit line (%d)", len(x))
+        if len(scan_x) < 3:
+            rospy.logwarn("Not enough points along ray")
             return
 
-        arrow_marker.scale.x = avg_distance / len(x)
+        avg_distance = avg_distance / len(scan_x)
+        arrow_marker.scale.x = avg_distance
         self.arrow_pub.publish(arrow_marker)
 
-        # Publish the points
+        # Generate a series of points along ray from limelight
+        limelight_x = list()
+        limelight_y = list()
+        d = -1.0
+        while d <= 1.0:
+            distance = avg_distance + d
+            limelight_x.append(heading_transformed.pose.position.x + (distance * cos(yaw)))
+            limelight_y.append(heading_transformed.pose.position.y + (distance * sin(yaw)))
+            d += 0.1
+
+        # Determine which points are closest
+        dists = list()
+        for i in range(len(scan_x)):
+            min_dist = 1000.0
+            for j in range(len(limelight_x)):
+                dist = (limelight_x[j] - scan_x[i])**2 + (limelight_y[j] - scan_y[i])**2
+                if dist < min_dist:
+                    min_dist = dist
+            dists.append(min_dist)
+        min_dist = min(dists)
+        x = list()
+        y = list()
+        for i in range(len(scan_x)):
+            if dists[i] < min_dist + 0.05:
+                x.append(scan_x[i])
+                y.append(scan_y[i])
+
+        if len(x) < 3:
+            rospy.logwarn("Not enough close points")
+
+        # Publish the target
+        target = PointStamped()
+        target.header = laser_msg.header
+        target.point.x = sum(x) / len(x)
+        target.point.y = sum(y) / len(y)
+        target.point.z = 0.0  # TODO, fill this in
+        self.target_pub.publish(target)
+
+        # Publish debug information
         wall_points = MarkerArray()
         for i in range(len(x)):
             marker = Marker()
@@ -179,39 +219,41 @@ class TargetLocalization:
             marker.color.r = 1.0 # Red!
             wall_points.markers.append(marker)
 
-        # Find a line best fit to points
-        # https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
-        x = numpy.array(x, dtype=numpy.float64)
-        y = numpy.array(y, dtype=numpy.float64)
-        A = numpy.vstack([x, numpy.ones(len(x))]).T
-        m1, c1 = numpy.linalg.lstsq(A, y)[0]
-        rospy.loginfo("m1: %f, c1: %f", m1, c1)
-
-        # Convert heading a lin equation (m2x + c2)
-        m2 = tan(yaw)
-        c2 = heading_transformed.pose.position.y - (heading_transformed.pose.position.x * m2)
-        rospy.loginfo("m2: %f, c2: %f", m2, c2)
-
-        # Find intersection between line (m1x + c1) and ray eminating fom heading_transformed (m2x + c2)
-        xi = (c2 - c1) / (m2 - m1)
-        yi = m1 * xi + c1
+        for i in range(len(limelight_x)):
+            marker = Marker()
+            marker.header = laser_msg.header
+            marker.ns = "limelight_points"
+            marker.id = i
+            marker.type = Marker.SPHERE
+            marker.scale.x = 0.05
+            marker.scale.y = 0.05
+            marker.scale.z = 0.05
+            marker.pose.position.x = limelight_x[i]
+            marker.pose.position.y = limelight_y[i]
+            marker.pose.orientation.w = 1
+            marker.color.a = 1.0 # Don't forget the alpha!
+            marker.color.g = 1.0 # Green!
+            wall_points.markers.append(marker)
 
         marker = Marker()
-        marker.header = msg.header
+        marker.header = laser_msg.header
         marker.ns = "target_point"
         marker.id = 0
         marker.type = Marker.SPHERE
         marker.scale.x = 0.25
         marker.scale.y = 0.25
         marker.scale.z = 0.25
-        marker.pose.position.x = xi
-        marker.pose.position.y = yi
+        marker.pose.position.x = target.point.x
+        marker.pose.position.y = target.point.y
+        marker.pose.position.z = target.point.z
         marker.pose.orientation.w = 1
         marker.color.a = 1.0 # Don't forget the alpha!
         marker.color.b = 1.0 # Blue!
         wall_points.markers.append(marker)
 
-        self.wall_points_pub.publish(wall_points)
+        self.points_pub.publish(wall_points)
+
+        rospy.loginfo("Found target! (%fs)", rospy.get_time() - start_time)
 
 
     def laser_callback(self, msg):
