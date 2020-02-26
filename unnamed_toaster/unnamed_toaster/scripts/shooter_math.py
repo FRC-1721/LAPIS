@@ -38,19 +38,21 @@ from geometry_msgs.msg import PointStamped
 from std_msgs.msg import Float64
 
 
-class AutoShooter:
+class ShooterMath:
 
     def __init__(self):
-        self.pub = rospy.Publisher("turret_command", Float64, queue_size=1)
+        #self.pub = rospy.Publisher("turret_command", Float64, queue_size=1)
 
         # Setup TF2
         # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
-        self.sub = rospy.Subscriber("target_point", PointStamped, self.callback)
+        #self.sub = rospy.Subscriber("target_point", PointStamped, self.target_update)
 
-    def callback(self, msg):
+        self.last_target_command = None
+
+    def calculate_azimuth(self, msg):
 
         # Get transformation between target point frame (laser?) and base_link
         try:
@@ -69,11 +71,13 @@ class AutoShooter:
         # Command stuff
         command = Float64()
         command.data = angle
-        self.pub.publish(command)
+
+        self.last_target_command = command
+        #self.pub.publish(command)
 
 
-if __name__ == "__main__":
-	rospy.init_node("auto_shooter")
-	auto = AutoShooter()
-	rospy.spin()
+#if __name__ == "__main__":
+#  rospy.init_node("auto_shooter")
+#  auto = AutoShooter()
+#  rospy.spin()
 
