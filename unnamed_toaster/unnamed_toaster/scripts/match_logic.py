@@ -67,20 +67,42 @@ class MatchLogic:
             # Mode specific Logic
             if robot_mode == "Teleop":
                 self.table.putString("ROSStatus", "ROS, Teleop has started.")
-                pass
+                self.Teleop()
+
             elif robot_mode == "Autonomous":
                 self.table.putString("ROSStatus", "ROS is in autonomous mode.")
-                pass
+                self.Autonomous()
+
             elif robot_mode == "Disabled":
                 self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
-                pass
+                self.Disabled()
+
             elif robot_mode == "Test":
                 self.table.putString("ROSStatus", "ROS Operating in test mode.")
-                pass
+                self.Test()
+                
             elif robot_mode == "NoMode":
                 self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
                 pass
             else:
+                self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
                 rospy.logerr("No mode or robot is not ready")
 
             rate.sleep()
+
+    def Teleop(self):
+        pass
+    
+    def Autonomous(self):
+        # Do at same time
+        # - Backup to cross the line
+        # - Move turret to close enough
+        # Enable Shooter
+        # Fire when ready
+        pass
+    
+    def Disabled(self):
+        pass
+
+    def Test(self):
+        pass
