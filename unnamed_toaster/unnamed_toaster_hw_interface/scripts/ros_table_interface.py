@@ -34,6 +34,7 @@ from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesI
 from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
 from unnamed_toaster_hw_interface.turret import Turret
+from unnamed_toaster.unnamed_toaster.scripts.match_logic import MatchLogic
 
 class ROSTableInterface:
 
@@ -45,6 +46,7 @@ class ROSTableInterface:
         self.control = RobotControl(self.table)
         self.turret = Turret(self.table)
         self.odom = RobotOdom()
+        self.match_logic = MatchLogic(self.table)
 
     def run(self):
         rate = rospy.Rate(50)
@@ -63,6 +65,7 @@ class ROSTableInterface:
 
             self.turret.update()
             self.turret.publish()
+            self.match_logic.run()
 
             # Sleep
             rate.sleep()

@@ -59,36 +59,32 @@ class MatchLogic:
         rospy.init_node("match_logic")
     
     def run(self):
-        rate = rospy.Rate(self.rate)
-        while not rospy.is_shutdown():
-            # Find the robot mode
-            robot_mode = self.table.getString("RobotMode", "Waiting for Rio")
+        # Find the robot mode
+        robot_mode = self.table.getString("RobotMode", "Waiting for Rio")
 
-            # Mode specific Logic
-            if robot_mode == "Teleop":
-                self.table.putString("ROSStatus", "ROS, Teleop has started.")
-                self.Teleop()
+        # Mode specific Logic
+        if robot_mode == "Teleop":
+            self.table.putString("ROSStatus", "ROS, Teleop has started.")
+            self.Teleop()
 
-            elif robot_mode == "Autonomous":
-                self.table.putString("ROSStatus", "ROS is in autonomous mode.")
-                self.Autonomous()
+        elif robot_mode == "Autonomous":
+            self.table.putString("ROSStatus", "ROS is in autonomous mode.")
+            self.Autonomous()
 
-            elif robot_mode == "Disabled":
-                self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
-                self.Disabled()
+        elif robot_mode == "Disabled":
+            self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
+            self.Disabled()
 
-            elif robot_mode == "Test":
-                self.table.putString("ROSStatus", "ROS Operating in test mode.")
-                self.Test()
-                
-            elif robot_mode == "NoMode":
-                self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
-                pass
-            else:
-                self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
-                rospy.logerr("No mode or robot is not ready")
-
-            rate.sleep()
+        elif robot_mode == "Test":
+            self.table.putString("ROSStatus", "ROS Operating in test mode.")
+            self.Test()
+            
+        elif robot_mode == "NoMode":
+            self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
+            pass
+        else:
+            self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
+            rospy.logerr("No mode or robot is not ready")
 
     def Teleop(self):
         pass
