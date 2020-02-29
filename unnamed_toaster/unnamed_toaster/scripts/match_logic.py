@@ -58,29 +58,17 @@ class MatchLogic:
         self.robot_mode = msg.data
 
     def run(self):
-        # Mode specific Logic
-        if self.robot_mode == "Teleop":
-            #self.table.putString("ROSStatus", "ROS, Teleop has started.")
-            self.Teleop()
+        # Switch
+        modes = {
+            "Teleop": self.Teleop,
+            "Autonomous": self.Autonomous,
+            "Disabled": self.Disabled,
+            "Test": self.Test,
+            "NoMode": self.NoMode
+        }
 
-        elif self.robot_mode == "Autonomous":
-            #self.table.putString("ROSStatus", "ROS is in autonomous mode.")
-            self.Autonomous()
-
-        elif self.robot_mode == "Disabled":
-            #self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
-            self.Disabled()
-
-        elif self.robot_mode == "Test":
-            #self.table.putString("ROSStatus", "ROS Operating in test mode.")
-            self.Test()
-            
-        elif self.robot_mode == "NoMode":
-            #self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
-            pass
-        else:
-            #self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
-            rospy.logerr("No mode or robot is not ready")
+        mode = modes.get(self.robot_mode, lambda: "Invalid Mode") # Get the mode
+        mode() # Run the mode
 
     def Teleop(self):
         pass
@@ -97,6 +85,9 @@ class MatchLogic:
         pass
 
     def Test(self):
+        pass
+    
+    def NoMode(self):
         pass
 
 if __name__ == "__main__":
