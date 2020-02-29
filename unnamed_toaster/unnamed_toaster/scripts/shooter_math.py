@@ -75,9 +75,3 @@ class ShooterMath:
         self.last_target_command = command
         #self.pub.publish(command)
 
-
-#if __name__ == "__main__":
-#  rospy.init_node("auto_shooter")
-#  auto = AutoShooter()
-#  rospy.spin()
-

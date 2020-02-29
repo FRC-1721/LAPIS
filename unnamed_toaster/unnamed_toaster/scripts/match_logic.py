@@ -33,57 +33,53 @@ import tf2_ros
 import tf2_geometry_msgs
 
 from geometry_msgs.msg import PointStamped
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, String
 
 from unnamed_toaster.unnamed_toaster.scripts.shooter_math import ShooterMath
 
 
 class MatchLogic:
 
-    def __init__(self, table):
+    def __init__(self):
         # Publishers and Subscribers
         self.turret_command_pub = rospy.Publisher("turret_command", Float64, queu_size=1)
-        self.target_sub = rospy.Subscriber("target_point", PointStamped, ShooterMath.calculate_azimuth)
-
-        self.rate = rospy.get_param("~rate", 50) # Get the paramater for the rate
+        self.target_sub = rospy.Subscriber("target_point", PointStamped, ShooterMath.calculate_azimuth) # Setup to calculate the target
+        self.mode_sub = rospy.Subscriber("robot_mode", String, MatchLogic.update_mode) # Setup to run mode logic on mode update
 
         # Setup TF2
         # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
-        # NT
-        self.table = table
-
-        # Init as node
-        rospy.init_node("match_logic")
+        # Other
+        self.robot_mode = "No Mode"
     
-    def run(self):
-        # Find the robot mode
-        robot_mode = self.table.getString("RobotMode", "Waiting for Rio")
+    def update_mode(self, msg): # Update the mode.
+        self.robot_mode = msg.data
 
+    def run(self):
         # Mode specific Logic
-        if robot_mode == "Teleop":
-            self.table.putString("ROSStatus", "ROS, Teleop has started.")
+        if self.robot_mode == "Teleop":
+            #self.table.putString("ROSStatus", "ROS, Teleop has started.")
             self.Teleop()
 
-        elif robot_mode == "Autonomous":
-            self.table.putString("ROSStatus", "ROS is in autonomous mode.")
+        elif self.robot_mode == "Autonomous":
+            #self.table.putString("ROSStatus", "ROS is in autonomous mode.")
             self.Autonomous()
 
-        elif robot_mode == "Disabled":
-            self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
+        elif self.robot_mode == "Disabled":
+            #self.table.putString("ROSStatus", "ROS disabled, robot in disabled mode")
             self.Disabled()
 
-        elif robot_mode == "Test":
-            self.table.putString("ROSStatus", "ROS Operating in test mode.")
+        elif self.robot_mode == "Test":
+            #self.table.putString("ROSStatus", "ROS Operating in test mode.")
             self.Test()
             
-        elif robot_mode == "NoMode":
-            self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
+        elif self.robot_mode == "NoMode":
+            #self.table.putString("ROSStatus", "ROS waiting for match to start or reboot.")
             pass
         else:
-            self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
+            #self.table.putString("ROSStatus", "ROS, No mode or robot is not ready")
             rospy.logerr("No mode or robot is not ready")
 
     def Teleop(self):
@@ -102,3 +98,14 @@ class MatchLogic:
 
     def Test(self):
         pass
+
+if __name__ == "__main__":
+    rospy.init_node("match_logic")
+    match_logic = MatchLogic()
+
+    rate = rospy.Rate(50)
+    while not rospy.is_shutdown():
+        match_logic.run()
+
+        # Sleep
+        rate.sleep()

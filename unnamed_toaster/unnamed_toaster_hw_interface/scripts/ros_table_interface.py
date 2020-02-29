@@ -30,15 +30,21 @@
 """
 
 import rospy
+
 from unnamed_toaster_hw_interface.network_tables_interface import NetworkTablesInterface
 from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
 from unnamed_toaster_hw_interface.turret import Turret
-from unnamed_toaster.unnamed_toaster.scripts.match_logic import MatchLogic
+
+from std_msgs.msg import String
 
 class ROSTableInterface:
-
+      
     def __init__(self):
+        # Publisher
+        self.robot_mode_pub = rospy.Publisher("robot_mode", String, queu_size=1)
+
+        # Tables
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
         self.table = NetworkTablesInterface("ROS", ip, 5800)
 
@@ -46,7 +52,6 @@ class ROSTableInterface:
         self.control = RobotControl(self.table)
         self.turret = Turret(self.table)
         self.odom = RobotOdom()
-        self.match_logic = MatchLogic(self.table)
 
     def run(self):
         rate = rospy.Rate(50)
@@ -55,7 +60,7 @@ class ROSTableInterface:
             # Odom Get info
             left = self.table.getFloat('Port', 0)
             right = self.table.getFloat('Starboard', 0)
-            index = self.table.getInt('rosIndex', 0)
+            index = self.table.getInt('rosIndex', 0)  
             # Logic for odom sawtooth control
             if index != previous_odom_index:
                 self.odom.update(left, right)
@@ -63,9 +68,12 @@ class ROSTableInterface:
             previous_index = index
 
 
+            # Update turret
             self.turret.update()
             self.turret.publish()
-            self.match_logic.run()
+
+            # Publish mode
+            self.robot_mode_pub.publish(self.table.getString("RobotMode", "Waiting for Rio"))
 
             # Sleep
             rate.sleep()

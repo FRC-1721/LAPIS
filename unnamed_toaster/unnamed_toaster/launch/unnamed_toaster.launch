@@ -28,4 +28,9 @@
     <param name="ip" type="string" value="10.17.21.2" />
   </node>
 
+  <!-- Start game logic -->
+  <node name="match_logic" pkg="unnamed_toaster" type="match_logic.py" output="screen">
+    <param name="rate" type="int" value="50" />
+  </node>
+
 </launch>
