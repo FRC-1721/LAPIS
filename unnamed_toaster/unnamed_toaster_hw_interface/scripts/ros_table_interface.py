@@ -42,7 +42,7 @@ class ROSTableInterface:
       
     def __init__(self):
         # Publisher
-        self.robot_mode_pub = rospy.Publisher("robot_mode", String, queu_size=1)
+        self.robot_mode_pub = rospy.Publisher("robot_mode", String, queue_size=1)
 
         # Tables
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC")

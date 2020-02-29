@@ -35,16 +35,16 @@ import tf2_geometry_msgs
 from geometry_msgs.msg import PointStamped
 from std_msgs.msg import Float64, String
 
-from unnamed_toaster.unnamed_toaster.scripts.shooter_math import ShooterMath
+from shooter_math import ShooterMath
 
 
 class MatchLogic:
 
     def __init__(self):
         # Publishers and Subscribers
-        self.turret_command_pub = rospy.Publisher("turret_command", Float64, queu_size=1)
+        self.turret_command_pub = rospy.Publisher("turret_command", Float64, queue_size=1)
         self.target_sub = rospy.Subscriber("target_point", PointStamped, ShooterMath.calculate_azimuth) # Setup to calculate the target
-        self.mode_sub = rospy.Subscriber("robot_mode", String, MatchLogic.update_mode) # Setup to run mode logic on mode update
+        self.mode_sub = rospy.Subscriber("robot_mode", String, self.update_mode) # Setup to run mode logic on mode update
 
         # Setup TF2
         # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
@@ -67,11 +67,11 @@ class MatchLogic:
             "NoMode": self.NoMode
         }
 
-        mode = modes.get(self.robot_mode, lambda: "Invalid Mode") # Get the mode
+        mode = modes.get(self.robot_mode, lambda: self.NoMode) # Get the mode
         mode() # Run the mode
 
     def Teleop(self):
-        pass
+        print("Teleop")
     
     def Autonomous(self):
         # Do at same time
@@ -79,16 +79,16 @@ class MatchLogic:
         # - Move turret to close enough
         # Enable Shooter
         # Fire when ready
-        pass
+        print("Auto")
     
     def Disabled(self):
-        pass
+        print("Disabled")
 
     def Test(self):
-        pass
+        print("Test")
     
     def NoMode(self):
-        pass
+        print("No mode")
 
 if __name__ == "__main__":
     rospy.init_node("match_logic")
