@@ -1,0 +1,32 @@
+fixed_test_marks:
+  0.2: # Distance in meters
+    height: 0.0 # Height in meters
+    velocity: 0.0 # Velocity in ticks/10ms
+  0.4:
+    height: 0.0
+    velocity: 0.0
+  0.6:
+    height: 0.0
+    velocity: 0.0
+  0.8:
+    height: 0.0
+    velocity: 0.0
+  1.0:
+    height: 0.0
+    velocity: 0.0
+  1.2:
+    height: 0.0
+    velocity: 0.0
+  1.4:
+    height: 0.0
+    velocity: 0.0
+  1.6:
+    height: 0.0
+    velocity: 0.0
+  1.8:
+    height: 0.0
+    velocity: 0.0
+  2.0:
+    height: 0.0
+    velocity: 0.0
+ 

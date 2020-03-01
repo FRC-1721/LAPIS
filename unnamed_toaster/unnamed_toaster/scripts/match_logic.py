@@ -29,51 +29,74 @@
 
 import rospy
 
-from math import atan2
-
 import tf2_ros
 import tf2_geometry_msgs
 
 from geometry_msgs.msg import PointStamped
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, String
+
+from shooter_math import ShooterMath
 
 
-class AutoShooter:
+class MatchLogic:
 
     def __init__(self):
-        self.pub = rospy.Publisher("turret_command", Float64, queue_size=1)
+        # Publishers and Subscribers
+        self.turret_command_pub = rospy.Publisher("turret_command", Float64, queue_size=1)
+        self.target_sub = rospy.Subscriber("target_point", PointStamped, ShooterMath.calculate_azimuth) # Setup to calculate the target
+        self.mode_sub = rospy.Subscriber("robot_mode", String, self.update_mode) # Setup to run mode logic on mode update
 
         # Setup TF2
         # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
-        self.sub = rospy.Subscriber("target_point", PointStamped, self.callback)
+        # Other
+        self.robot_mode = "No Mode"
+    
+    def update_mode(self, msg): # Update the mode.
+        self.robot_mode = msg.data
 
-    def callback(self, msg):
+    def run(self):
+        # Switch
+        modes = {
+            "Teleop": self.Teleop,
+            "Autonomous": self.Autonomous,
+            "Disabled": self.Disabled,
+            "Test": self.Test,
+            "NoMode": self.NoMode
+        }
 
-        # Get transformation between target point frame (laser?) and base_link
-        try:
-            # TODO if we start moving really fast, might need to use timestamp from message
-            transform = self.tf_buffer.lookup_transform(msg.header.frame_id, "base_link", msg.header.stamp, rospy.Duration(1.0))
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-            rospy.logerr("Error getting transform")
-            return
+        mode = modes.get(self.robot_mode, lambda: self.NoMode) # Get the mode
+        mode() # Run the mode
 
-        # Transform point to base_link
-        target_point = tf2_geometry_msgs.do_transform_point(msg, transform)
+    def Teleop(self):
+        print("Teleop")
+    
+    def Autonomous(self):
+        # Do at same time
+        # - Backup to cross the line
+        # - Move turret to close enough
+        # Enable Shooter
+        # Fire when ready
+        print("Auto")
+    
+    def Disabled(self):
+        print("Disabled")
 
-        # Find yaw angle for turret
-        angle = atan2(target_point.point.y, target_point.point.x)
-
-        # Command stuff
-        command = Float64()
-        command.data = angle
-        self.pub.publish(command)
-
+    def Test(self):
+        print("Test")
+    
+    def NoMode(self):
+        print("No mode")
 
 if __name__ == "__main__":
-	rospy.init_node("auto_shooter")
-	auto = AutoShooter()
-	rospy.spin()
+    rospy.init_node("match_logic")
+    match_logic = MatchLogic()
 
+    rate = rospy.Rate(50)
+    while not rospy.is_shutdown():
+        match_logic.run()
+
+        # Sleep
+        rate.sleep()

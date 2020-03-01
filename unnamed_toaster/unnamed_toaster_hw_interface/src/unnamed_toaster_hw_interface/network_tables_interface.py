@@ -44,5 +44,9 @@ class NetworkTablesInterface:
     def getInt(self, name, default):
         return int(self.table.getNumber(name, str(default)))
 
+    def getString(self, name, default):
+        return str(self.table.getString(name, str(default)))
+
     def putNumber(self, name, number):
         self.table.putNumber(name, number)
+
