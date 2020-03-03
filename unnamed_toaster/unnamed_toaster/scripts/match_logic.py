@@ -71,24 +71,26 @@ class MatchLogic:
         mode() # Run the mode
 
     def Teleop(self):
-        print("Teleop")
+        rospy.loginfo("RobotMode: Teleoperated")
     
     def Autonomous(self):
+        rospy.loginfo("RobotMode: Autonomous")
         # Do at same time
         # - Backup to cross the line
         # - Move turret to close enough
         # Enable Shooter
         # Fire when ready
-        print("Auto")
+        # Fire all balls
+        # Track and intake balls on the field 
     
     def Disabled(self):
-        print("Disabled")
+        rospy.loginfo("RobotMode: Disabled")
 
     def Test(self):
-        print("Test")
+        rospy.loginfo("RobotMode: Test")
     
     def NoMode(self):
-        print("No mode")
+        rospy.loginfo("RobotMode: NoMode, transmitted mode was: " + str(self.robot_mode))
 
 if __name__ == "__main__":
     rospy.init_node("match_logic")
