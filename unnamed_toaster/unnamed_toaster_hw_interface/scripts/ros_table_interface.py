@@ -36,13 +36,14 @@ from unnamed_toaster_hw_interface.robot_control import RobotControl
 from unnamed_toaster_hw_interface.robot_odom import RobotOdom
 from unnamed_toaster_hw_interface.turret import Turret
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Float64
 
 class ROSTableInterface:
       
     def __init__(self):
         # Publisher
         self.robot_mode_pub = rospy.Publisher("robot_mode", String, queue_size=1)
+        self.init_pose_pub = rospy.Publisher("init_pose", Float64, queue_size=1)
 
         # Tables
         ip = rospy.get_param("~ip", "roboRIO-1721-FRC")
@@ -60,13 +61,12 @@ class ROSTableInterface:
             # Odom Get info
             left = self.table.getFloat('Port', 0)
             right = self.table.getFloat('Starboard', 0)
-            index = self.table.getInt('rosIndex', 0)  
+            index = self.table.getInt('rosIndex', 0)
             # Logic for odom sawtooth control
             if index != previous_odom_index:
                 self.odom.update(left, right)
             self.odom.publish()
             previous_index = index
-
 
             # Update turret
             self.turret.update()
@@ -74,6 +74,9 @@ class ROSTableInterface:
 
             # Publish mode
             self.robot_mode_pub.publish(self.table.getString("RobotMode", "Waiting for Rio"))
+
+            # Publish init pose
+            self.init_pose_pub.publish(self.table.getFloat("distance_along_init_line", -1.0))
 
             # Sleep
             rate.sleep()
