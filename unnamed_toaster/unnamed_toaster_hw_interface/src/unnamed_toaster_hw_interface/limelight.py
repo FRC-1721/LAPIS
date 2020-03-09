@@ -34,6 +34,7 @@ from tf import transformations
 from geometry_msgs.msg import PointStamped
 
 
+
 class Limelight:
 
     def __init__(self):
@@ -43,7 +44,8 @@ class Limelight:
 
 
     def update(self, table):
-        tx = radians(table.getFloat('tx', 1)) # Convert the float converting the double into
+        # Convert the float converting the double into
+        tx = radians(table.getFloat('tx', 1))
         ty = radians(table.getFloat('ty', 1))
         ta = table.getFloat('ta', 1)
 

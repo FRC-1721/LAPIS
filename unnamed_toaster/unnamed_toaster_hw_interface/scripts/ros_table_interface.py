@@ -79,7 +79,7 @@ class ROSTableInterface:
             rate.sleep()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     rospy.init_node("ros_table_node")
     table = ROSTableInterface()
     table.run()

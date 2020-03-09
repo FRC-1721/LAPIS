@@ -28,16 +28,22 @@
 import rospy
 from geometry_msgs.msg import Twist
 
+
 def clamp(speed, minspeed, maxspeed):
     output_speed = max(min(maxspeed, speed), minspeed)
     return output_speed
 
+
 class RobotControl:
 
     def __init__(self, table):
-        self.wheel_base = rospy.get_param("~wheel_base", 1.0) # The robot's wheelbase in meters
-        self.max_speed = rospy.get_param("~max_speed", 1.5) # The max speed of the robot in m/s
-        self.max_spin = rospy.get_param("~max_spin", 1.5) * self.wheel_base / 2.0 # The max turn speed of the robot in rad/s
+        # The robot's wheelbase in meters
+        self.wheel_base = rospy.get_param("~wheel_base", 1.0)
+        # The max speed of the robot in m/s
+        self.max_speed = rospy.get_param("~max_speed", 1.5)
+        # The max turn speed of the robot in rad/s
+        self.max_spin = rospy.get_param(
+            "~max_spin", 1.5) * self.wheel_base / 2.0
 
         self.table = table  # This is an instance of NetworkTableInterface
 
@@ -50,5 +56,6 @@ class RobotControl:
         thro = clamp(thro, self.max_speed * -1, self.max_speed)
         steerage = clamp(steerage, self.max_spin * -1, self.max_spin)
 
-        self.table.putNumber("coprocessorPort", thro + steerage) # Set port wheels in m/s
-        self.table.putNumber("coprocessorStarboard", thro - steerage) # Set starboard wheels in m/s
+        self.table.putNumber("coprocessorPort", thro + steerage)  # Set port wheels in m/s
+        # Set starboard wheels in m/s
+        self.table.putNumber("coprocessorStarboard", thro - steerage)
