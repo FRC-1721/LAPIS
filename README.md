@@ -1,5 +1,7 @@
 # LAPIS
 ![Image Owned by Mojang](https://gamepedia.cursecdn.com/minecraft_gamepedia/archive/9/9f/20190403173427%21Lapis_Lazuli.png?version=333534eee995063b4191a3abe9f86113)
+Welcome to LAPIS, the light assisted positioning intelligence system.
+LAPIS is a work in progress system to interface ROS with the existing FRC hardware.
 
 # Hungry Toaster
 ![Image Owned by Travis aka boinary aka dirdraggo](https://cdn.discordapp.com/attachments/516760208366764038/647066532861575168/Hungry_Toaster.png)
