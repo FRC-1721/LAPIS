@@ -40,19 +40,29 @@ from std_msgs.msg import Float64
 
 class ShooterMath:
 
-    def __init__(self):
-        #self.pub = rospy.Publisher("turret_command", Float64, queue_size=1)
+    def __init__(self, tf_buffer):
+        self.tf_buffer = tf_buffer
+        self.desired_turret_command = None
 
-        # Setup TF2
-        # http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28Python%29
-        self.tf_buffer = tf2_ros.Buffer()
-        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
+        self.target_sub = rospy.Subscriber("target_point", PointStamped, self.callback)
 
-        #self.sub = rospy.Subscriber("target_point", PointStamped, self.target_update)
+    # Get a command message for our shooter, based on distance to target
+    def get_shooter_msg(self, distance):
+        command = None
+        return command
 
-        self.last_target_command = None
+    # Get a command message for our turret, based on an angle
+    def get_turret_msg(self, angle):
+        command = Float64()
+        command.data = angle
+        return command
 
-    def calculate_azimuth(self, msg):
+    # Get a command angle for our turret based on a target point
+    def get_turret_angle(self, x, y):
+        return atan2(y, x)
+
+    # ROS Callback for data from target_localization node
+    def callback(self, msg):
 
         # Get transformation between target point frame (laser?) and base_link
         try:
@@ -66,12 +76,6 @@ class ShooterMath:
         target_point = tf2_geometry_msgs.do_transform_point(msg, transform)
 
         # Find yaw angle for turret
-        angle = atan2(target_point.point.y, target_point.point.x)
+        angle = self.get_turret_angle(target_point.point.x, target_point.point.y)
 
-        # Command stuff
-        command = Float64()
-        command.data = angle
-
-        self.last_target_command = command
-        #self.pub.publish(command)
-
+        self.desired_turret_command = self.get_turret_msg(angle)
